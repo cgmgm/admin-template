@@ -1,46 +1,31 @@
 <template>
 	<div class="icon-selector w100 h100">
-		<el-input
-			v-model="state.fontIconSearch"
-			:placeholder="state.fontIconPlaceholder"
-			:clearable="clearable"
-			:disabled="disabled"
-			:size="size"
-			ref="inputWidthRef"
-			@clear="onClearFontIcon"
-			@focus="onIconFocus"
-			@blur="onIconBlur"
-		>
+		<el-input v-model="state.fontIconSearch" :placeholder="state.fontIconPlaceholder" :clearable="clearable"
+			:disabled="disabled" :size="size" ref="inputWidthRef" @clear="onClearFontIcon" @focus="onIconFocus"
+			@blur="onIconBlur">
 			<template #prepend>
-				<SvgIcon
-					:name="state.fontIconPrefix === '' ? prepend : state.fontIconPrefix"
-					class="font14"
-					v-if="state.fontIconPrefix === '' ? prepend?.indexOf('ele-') > -1 : state.fontIconPrefix?.indexOf('ele-') > -1"
-				/>
+				<SvgIcon :name="state.fontIconPrefix === '' ? prepend : state.fontIconPrefix" class="font14"
+					v-if="state.fontIconPrefix === '' ? prepend?.indexOf('ele-') > -1 : state.fontIconPrefix?.indexOf('ele-') > -1" />
 				<i v-else :class="state.fontIconPrefix === '' ? prepend : state.fontIconPrefix" class="font14"></i>
 			</template>
 		</el-input>
-		<el-popover
-			placement="bottom"
-			:width="state.fontIconWidth"
-			transition="el-zoom-in-top"
-			popper-class="icon-selector-popper"
-			trigger="click"
-			:virtual-ref="inputWidthRef"
-			virtual-triggering
-		>
+		<el-popover placement="bottom" :width="state.fontIconWidth" transition="el-zoom-in-top"
+			popper-class="icon-selector-popper" trigger="click" :virtual-ref="inputWidthRef" virtual-triggering>
 			<template #default>
 				<div class="icon-selector-warp">
 					<div class="icon-selector-warp-title">{{ title }}</div>
 					<el-tabs v-model="state.fontIconTabActive" @tab-click="onIconClick">
 						<el-tab-pane lazy label="ali" name="ali">
-							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription" :prefix="state.fontIconPrefix" @get-icon="onColClick" />
+							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription"
+								:prefix="state.fontIconPrefix" @get-icon="onColClick" />
 						</el-tab-pane>
 						<el-tab-pane lazy label="ele" name="ele">
-							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription" :prefix="state.fontIconPrefix" @get-icon="onColClick" />
+							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription"
+								:prefix="state.fontIconPrefix" @get-icon="onColClick" />
 						</el-tab-pane>
 						<el-tab-pane lazy label="awe" name="awe">
-							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription" :prefix="state.fontIconPrefix" @get-icon="onColClick" />
+							<IconList :list="fontIconSheetsFilterList" :empty="emptyDescription"
+								:prefix="state.fontIconPrefix" @get-icon="onColClick" />
 						</el-tab-pane>
 					</el-tabs>
 				</div>
@@ -52,8 +37,8 @@
 <script setup lang="ts" name="iconSelector">
 import { defineAsyncComponent, ref, reactive, onMounted, nextTick, computed, watch } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
-import initIconfont from '/@/utils/getStyleSheets';
-import '/@/theme/iconSelector.scss';
+import initIconfont from '@/utils/getStyleSheets';
+import '@/theme/iconSelector.scss';
 
 // 定义父组件传过来的值
 const props = defineProps({
@@ -102,7 +87,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'get', 'clear']);
 
 // 引入组件
-const IconList = defineAsyncComponent(() => import('/@/components/iconSelector/list.vue'));
+const IconList = defineAsyncComponent(() => import('@/components/iconSelector/list.vue'));
 
 // 定义变量内容
 const inputWidthRef = ref();

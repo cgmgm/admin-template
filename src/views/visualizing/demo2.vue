@@ -17,7 +17,8 @@
 					</span>
 					<template #dropdown>
 						<el-dropdown-menu>
-							<el-dropdown-item v-for="(v, k) in state.dropdownList" :key="k">{{ v.label }} </el-dropdown-item>
+							<el-dropdown-item v-for="(v, k) in state.dropdownList" :key="k">{{ v.label }}
+							</el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
 				</el-dropdown>
@@ -59,7 +60,8 @@
 								</div>
 							</div>
 							<div class="sky-dd">
-								<div class="sky-dl" v-for="(v, k) in state.skyList" :key="k" :class="{ 'sky-dl-first': k === 1 }">
+								<div class="sky-dl" v-for="(v, k) in state.skyList" :key="k"
+									:class="{ 'sky-dl-first': k === 1 }">
 									<div>{{ v.v1 }}</div>
 									<div v-if="v.type === 'title'">{{ v.v2 }}</div>
 									<div v-else>
@@ -103,7 +105,8 @@
 								</div>
 							</div>
 							<div class="d-btn">
-								<div class="d-btn-item" v-for="(v, k) in state.dBtnList" :key="k" :class="{ 'd-btn-active': state.dBtnActive === k }">
+								<div class="d-btn-item" v-for="(v, k) in state.dBtnList" :key="k"
+									:class="{ 'd-btn-active': state.dBtnActive === k }">
 									<SvgIcon name="ele-Money" class="d-btn-item-left" />
 									<div class="d-btn-item-center">
 										<div>{{ v.v1 }}</div>
@@ -146,7 +149,8 @@
 						<div class="flex-content">
 							<div class="flex-content-left">
 								<div class="monitor-item" v-for="(v, k) in state.chartData4List" :key="k">
-									<div class="monitor-wave" :class="{ 'monitor-active': k === state.chartData4Index }">
+									<div class="monitor-wave"
+										:class="{ 'monitor-active': k === state.chartData4Index }">
 										<div class="monitor-z-index">
 											<div class="monitor-item-label">{{ v.label }}</div>
 										</div>
@@ -232,8 +236,8 @@
 import { reactive, onMounted, onUnmounted, ref } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-gl';
-import { formatDate } from '/@/utils/formatTime';
-import { NextLoading } from '/@/utils/loading';
+import { formatDate } from '@/utils/formatTime';
+import { NextLoading } from '@/utils/loading';
 import { dropdownList, skyList, dBtnList, earth3DBtnList, chartData4List } from './mock/demo2';
 
 // 定义变量内容
@@ -793,6 +797,7 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: column;
 	font-size: 13px;
+
 	.big-data-up {
 		height: 70px;
 		width: 100%;
@@ -801,10 +806,12 @@ onUnmounted(() => {
 		padding: 0 15px;
 		color: #43bdf0;
 		overflow: hidden;
+
 		.up-left {
 			width: 30%;
 			font-style: italic;
 		}
+
 		.up-center {
 			width: 40%;
 			display: flex;
@@ -818,15 +825,19 @@ onUnmounted(() => {
 			background-size: 200% 100%;
 			animation: masked-animation 4s infinite linear;
 			-webkit-box-reflect: below -2px -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(255, 255, 255, 0.1)));
+
 			@keyframes masked-animation {
 				0% {
 					background-position: 0 0;
 				}
+
 				100% {
 					background-position: -100% 0;
 				}
 			}
+
 			position: relative;
+
 			&::after {
 				content: '';
 				width: 50%;
@@ -837,18 +848,22 @@ onUnmounted(() => {
 				border: 1px transparent solid;
 				border-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), #43bdf0) 1 10;
 			}
+
 			span {
 				cursor: pointer;
 			}
 		}
+
 		.up-right {
 			width: 30%;
 			justify-content: flex-end;
 			display: flex;
 			align-items: center;
+
 			.ml15:hover {
 				cursor: pointer;
 			}
+
 			:deep(.el-dropdown) {
 				font-size: 13px !important;
 				color: #43bdf0;
@@ -856,19 +871,23 @@ onUnmounted(() => {
 			}
 		}
 	}
+
 	.big-data-down {
 		flex: 1;
 		overflow: hidden;
 		display: flex;
+
 		.big-data-down-left,
 		.big-data-down-right {
 			width: 30%;
 			display: flex;
 			flex-direction: column;
+
 			.flex-warp-item {
 				padding: 0 7.5px 15px 15px;
 				width: 100%;
 				height: 33.33%;
+
 				.flex-warp-item-box {
 					width: 100%;
 					height: 100%;
@@ -876,101 +895,124 @@ onUnmounted(() => {
 					display: flex;
 					flex-direction: column;
 					padding: 15px;
+
 					.flex-title {
 						margin-bottom: 15px;
 						color: #c0d1f2;
 						display: flex;
 						justify-content: space-between;
+
 						.flex-title-small {
 							font-size: 12px;
 						}
 					}
+
 					.flex-content {
 						flex: 1;
 						font-size: 12px;
 					}
+
 					.flex-content-overflow {
 						overflow: hidden;
 					}
 				}
 			}
 		}
+
 		.big-data-down-left {
 			color: #c0d1f2;
+
 			.sky {
 				display: flex;
 				align-items: center;
+
 				.sky-left {
 					font-size: 30px;
 				}
+
 				.sky-center {
 					flex: 1;
 					overflow: hidden;
 					padding: 0 10px;
+
 					.font {
 						margin-right: 15px;
 						background: unset !important;
 						border-radius: unset !important;
 						padding: unset !important;
 					}
+
 					span {
 						background: #22bc76;
 						border-radius: 2px;
 						padding: 0 5px;
 					}
+
 					.sky-tip {
 						overflow: hidden;
 						white-space: nowrap;
 						text-overflow: ellipsis;
 					}
 				}
+
 				.sky-right {
 					span {
 						font-size: 30px;
 					}
+
 					font {
 						font-size: 20px;
 					}
 				}
 			}
+
 			.sky-dd {
 				.sky-dl {
 					display: flex;
 					align-items: center;
 					height: 28px;
 					overflow: hidden;
+
 					div {
 						flex: 1;
 						overflow: hidden;
+
 						i {
 							font-size: 14px;
 						}
 					}
+
 					.tip {
 						overflow: hidden;
 						white-space: nowrap;
 						text-overflow: ellipsis;
 					}
+
 					&:hover {
 						background: rgba(0, 0, 0, 0.05);
 						cursor: default;
 						border-radius: 4px;
 					}
+
 					&:first-child:hover {
 						background: unset;
 					}
 				}
+
 				.sky-dl-first {
 					color: #43bdf0;
 				}
 			}
+
 			.d-states {
 				display: flex;
+
 				.d-states-item {
 					flex: 1;
 					display: flex;
 					align-items: center;
 					overflow: hidden;
+
 					i {
 						font-size: 20px;
 						height: 33px;
@@ -983,24 +1025,30 @@ onUnmounted(() => {
 						align-items: center;
 						justify-content: center;
 					}
+
 					.i-bg1 {
 						background: #22bc76;
 					}
+
 					.i-bg2 {
 						background: #e2356d;
 					}
+
 					.i-bg3 {
 						background: #43bbef;
 					}
+
 					.d-states-flex {
 						overflow: hidden;
 						padding: 0 10px 0;
+
 						.d-states-item-label {
 							color: #43bdf0;
 							overflow: hidden;
 							white-space: nowrap;
 							text-overflow: ellipsis;
 						}
+
 						.d-states-item-value {
 							font-size: 20px;
 							text-align: center;
@@ -1008,8 +1056,10 @@ onUnmounted(() => {
 					}
 				}
 			}
+
 			.d-btn {
 				margin-top: 15px;
+
 				.d-btn-item {
 					border: 1px solid #c0d1f2;
 					display: flex;
@@ -1021,6 +1071,7 @@ onUnmounted(() => {
 					margin-top: 15px;
 					cursor: pointer;
 					transition: all ease 0.3s;
+
 					.d-btn-item-left {
 						font-size: 20px;
 						border: 1px solid #c0d1f2;
@@ -1031,35 +1082,43 @@ onUnmounted(() => {
 						text-align: center;
 						font-size: 14px;
 					}
+
 					.d-btn-item-center {
 						padding: 0 10px;
 						flex: 1;
 					}
+
 					.d-btn-item-eight {
 						text-align: right;
 						padding-right: 10px;
 					}
 				}
+
 				.d-btn-active {
 					transition: all ease 0.3s;
 					border: 1px solid #43bdf0;
 					color: #43bdf0;
+
 					.d-btn-item-left {
 						border: 1px solid #43bdf0;
 					}
 				}
 			}
 		}
+
 		.big-data-down-center {
 			width: 40%;
 			display: flex;
 			flex-direction: column;
+
 			.big-data-down-center-one {
 				height: 66.67%;
 				padding: 0 7.5px 15px;
+
 				.big-data-down-center-one-content {
 					height: 100%;
 					position: relative;
+
 					.fixed-top,
 					.fixed-right,
 					.fixed-bottom,
@@ -1069,12 +1128,14 @@ onUnmounted(() => {
 						height: 100px;
 						display: flex;
 						cursor: pointer;
+
 						.circle {
 							position: absolute;
 							border-radius: 50%;
 							background: rgba(0, 0, 0, 0.01);
 							z-index: 10;
 						}
+
 						.text-box {
 							position: relative;
 							z-index: 11;
@@ -1082,52 +1143,62 @@ onUnmounted(() => {
 							margin: auto;
 							text-align: center;
 							font-size: 12px;
+
 							i {
 								font-size: 28px;
 								margin-bottom: 10px;
 							}
 						}
 					}
+
 					.fixed-top {
 						left: 20px;
 						top: 20px;
 					}
+
 					.fixed-right {
 						right: 20px;
 						top: 20px;
 					}
+
 					.fixed-bottom {
 						right: 20px;
 						bottom: 20px;
 					}
+
 					.fixed-left {
 						left: 20px;
 						bottom: 20px;
 					}
+
 					.circle:nth-of-type(1) {
 						width: 100px;
 						height: 95px;
 						animation: turnAround 6s infinite linear;
 						box-shadow: 0 0 1px 0 #869fe4, inset 0 0 10px 0 #869fe4;
 					}
+
 					.circle:nth-of-type(2) {
 						width: 95px;
 						height: 100px;
 						animation: turnAround 10s infinite linear;
 						box-shadow: 0 0 1px 0 #3397f2, inset 0 0 10px 0 #3397f2;
 					}
+
 					.circle:nth-of-type(3) {
 						width: 110px;
 						height: 100px;
 						animation: turnAround 5s infinite linear;
 						box-shadow: 0 0 1px 0 #3eaadc, inset 0 0 10px 0 #3eaadc;
 					}
+
 					.circle:nth-of-type(4) {
 						width: 100px;
 						height: 110px;
 						animation: turnAround 15s infinite linear;
 						box-shadow: 0 0 1px 0 #09f, inset 0 0 10px 0 #09f;
 					}
+
 					@keyframes turnAround {
 						100% {
 							transform: rotate(360deg);
@@ -1135,9 +1206,11 @@ onUnmounted(() => {
 					}
 				}
 			}
+
 			.big-data-down-center-two {
 				padding: 0 7.5px 15px;
 				height: 33.33%;
+
 				.flex-warp-item-box {
 					width: 100%;
 					height: 100%;
@@ -1145,29 +1218,35 @@ onUnmounted(() => {
 					display: flex;
 					flex-direction: column;
 					padding: 15px;
+
 					.flex-title {
 						margin-bottom: 15px;
 						color: #c0d1f2;
 						display: flex;
 						justify-content: space-between;
+
 						.flex-title-small {
 							font-size: 12px;
 						}
 					}
+
 					.flex-content {
 						flex: 1;
 						font-size: 12px;
 						display: flex;
 						height: calc(100% - 30px);
+
 						.flex-content-left {
 							display: flex;
 							flex-wrap: wrap;
 							width: 120px;
 							height: 100%;
+
 							.monitor-item {
 								width: 50%;
 								display: flex;
 								align-items: center;
+
 								.monitor-wave {
 									cursor: pointer;
 									width: 40px;
@@ -1177,6 +1256,7 @@ onUnmounted(() => {
 									border-radius: 50%;
 									overflow: hidden;
 									text-align: center;
+
 									&::before,
 									&::after {
 										content: '';
@@ -1189,15 +1269,18 @@ onUnmounted(() => {
 										transform: translateX(-50%);
 										z-index: 1;
 									}
+
 									&::before {
 										bottom: 10px;
 										border-radius: 60%;
 									}
+
 									&::after {
 										bottom: 8px;
 										opacity: 0.7;
 										border-radius: 37%;
 									}
+
 									.monitor-z-index {
 										position: relative;
 										z-index: 2;
@@ -1209,25 +1292,31 @@ onUnmounted(() => {
 										font-weight: bold;
 									}
 								}
+
 								@keyframes roateOne {
 									0% {
 										transform: translate(-50%, 0) rotateZ(0deg);
 									}
+
 									50% {
 										transform: translate(-50%, -2%) rotateZ(180deg);
 									}
+
 									100% {
 										transform: translate(-50%, 0%) rotateZ(360deg);
 									}
 								}
+
 								.monitor-active {
 									background-color: #22bc76;
+
 									.monitor-z-index {
 										color: #22bc76;
 									}
 								}
 							}
 						}
+
 						.flex-content-right {
 							flex: 1;
 						}
@@ -1235,20 +1324,25 @@ onUnmounted(() => {
 				}
 			}
 		}
+
 		.big-data-down-right {
 			.flex-warp-item {
 				padding: 0 15px 15px 7.5px;
+
 				.flex-content {
 					display: flex;
 					flex-direction: column;
+
 					.task {
 						display: flex;
 						height: 45px;
+
 						.task-item {
 							flex: 1;
 							color: #c0d1f2;
 							display: flex;
 							justify-content: center;
+
 							.task-item-box {
 								position: relative;
 								width: 45px;
@@ -1261,6 +1355,7 @@ onUnmounted(() => {
 								flex-direction: column;
 								justify-content: center;
 								box-shadow: 0 10px 12px 0 rgba(0, 0, 0, 0.3);
+
 								&::before {
 									content: '';
 									position: absolute;
@@ -1276,6 +1371,7 @@ onUnmounted(() => {
 										linear-gradient(#ffb980, #ffb980);
 									animation: rotate 2s linear infinite;
 								}
+
 								&::after {
 									content: '';
 									position: absolute;
@@ -1286,44 +1382,53 @@ onUnmounted(() => {
 									height: calc(100% - 2px);
 									border-radius: 100%;
 								}
+
 								.task-item-value {
 									text-align: center;
 									font-size: 14px;
 									font-weight: bold;
 								}
+
 								.task-item-label {
 									text-align: center;
 								}
 							}
+
 							.task1 {
 								&::after {
 									background: #5492be;
 								}
 							}
+
 							.task2 {
 								&::after {
 									background: #43a177;
 								}
 							}
+
 							.task3 {
 								&::after {
 									background: #a76077;
 								}
 							}
+
 							.task4 {
 								&::after {
 									background: #b4825a;
 								}
 							}
+
 							.task5 {
 								&::after {
 									background: #74568f;
 								}
 							}
 						}
+
 						.task-first-item {
 							flex-direction: column;
 							text-align: center;
+
 							.task-first {
 								font-size: 20px;
 							}
@@ -1331,6 +1436,7 @@ onUnmounted(() => {
 					}
 				}
 			}
+
 			.progress {
 				flex: 1;
 			}

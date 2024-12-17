@@ -97,10 +97,10 @@ import printJs from 'print-js';
 import table2excel from 'js-table2excel';
 import Sortable from 'sortablejs';
 import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import '/@/theme/tableTool.scss';
+import { useThemeConfig } from '@/stores/themeConfig';
+import '@/theme/tableTool.scss';
 import { useRoute } from 'vue-router';
-import { auths } from '/@/utils/authFunction';
+import { auths } from '@/utils/authFunction';
 
 // 搜索
 const TableSearch = defineAsyncComponent(() => import('./search.vue'));

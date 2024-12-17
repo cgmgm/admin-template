@@ -3,16 +3,9 @@
 		<div class="layout-lock-screen-mask"></div>
 		<div class="layout-lock-screen-img" :class="{ 'layout-lock-screen-filter': state.isShowLoockLogin }"></div>
 		<div class="layout-lock-screen">
-			<div
-				class="layout-lock-screen-date"
-				ref="layoutLockScreenDateRef"
-				@mousedown="onDownPc"
-				@mousemove="onMovePc"
-				@mouseup="onEnd"
-				@touchstart.stop="onDownApp"
-				@touchmove.stop="onMoveApp"
-				@touchend.stop="onEnd"
-			>
+			<div class="layout-lock-screen-date" ref="layoutLockScreenDateRef" @mousedown="onDownPc"
+				@mousemove="onMovePc" @mouseup="onEnd" @touchstart.stop="onDownApp" @touchmove.stop="onMoveApp"
+				@touchend.stop="onEnd">
 				<div class="layout-lock-screen-date-box">
 					<div class="layout-lock-screen-date-box-time">
 						{{ state.time.hm }}<span class="layout-lock-screen-date-box-minutes">{{ state.time.s }}</span>
@@ -28,16 +21,13 @@
 				<div v-show="state.isShowLoockLogin" class="layout-lock-screen-login">
 					<div class="layout-lock-screen-login-box">
 						<div class="layout-lock-screen-login-box-img">
-							<img src="https://img2.baidu.com/it/u=1978192862,2048448374&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500" />
+							<img
+								src="https://img2.baidu.com/it/u=1978192862,2048448374&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500" />
 						</div>
 						<div class="layout-lock-screen-login-box-name">Administrator</div>
 						<div class="layout-lock-screen-login-box-value">
-							<el-input
-								placeholder="请输入密码"
-								ref="layoutLockScreenInputRef"
-								v-model="state.lockScreenPassword"
-								@keyup.enter.native.stop="onLockScreenSubmit()"
-							>
+							<el-input placeholder="请输入密码" ref="layoutLockScreenInputRef"
+								v-model="state.lockScreenPassword" @keyup.enter.native.stop="onLockScreenSubmit()">
 								<template #append>
 									<el-button @click="onLockScreenSubmit">
 										<el-icon class="el-input__icon">
@@ -61,10 +51,10 @@
 
 <script setup lang="ts" name="layoutLockScreen">
 import { nextTick, onMounted, reactive, ref, onUnmounted } from 'vue';
-import { formatDate } from '/@/utils/formatTime';
-import { Local } from '/@/utils/storage';
+import { formatDate } from '@/utils/formatTime';
+import { Local } from '@/utils/storage';
 import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
+import { useThemeConfig } from '@/stores/themeConfig';
 
 // 定义变量内容
 const layoutLockScreenDateRef = ref<HtmlType>();
@@ -203,23 +193,28 @@ onUnmounted(() => {
 	width: 100%;
 	height: 100%;
 }
+
 .layout-lock-screen-filter {
 	filter: blur(1px);
 }
+
 .layout-lock-screen-mask {
 	background: var(--el-color-white);
 	@extend .layout-lock-screen-fixed;
 	z-index: 9999990;
 }
+
 .layout-lock-screen-img {
 	@extend .layout-lock-screen-fixed;
 	background-image: url('https://i.hd-r.cn/e4a19d84364f185266666765ac21a5db.jpg');
 	background-size: 100% 100%;
 	z-index: 9999991;
 }
+
 .layout-lock-screen {
 	@extend .layout-lock-screen-fixed;
 	z-index: 9999992;
+
 	&-date {
 		position: absolute;
 		left: 0;
@@ -229,22 +224,27 @@ onUnmounted(() => {
 		color: var(--el-color-white);
 		z-index: 9999993;
 		user-select: none;
+
 		&-box {
 			position: absolute;
 			left: 30px;
 			bottom: 50px;
+
 			&-time {
 				font-size: 100px;
 				color: var(--el-color-white);
 			}
+
 			&-info {
 				font-size: 40px;
 				color: var(--el-color-white);
 			}
+
 			&-minutes {
 				font-size: 16px;
 			}
 		}
+
 		&-top {
 			width: 40px;
 			height: 40px;
@@ -260,9 +260,11 @@ onUnmounted(() => {
 			text-align: center;
 			overflow: hidden;
 			transition: all 0.3s ease;
+
 			i {
 				transition: all 0.3s ease;
 			}
+
 			&-text {
 				opacity: 0;
 				position: absolute;
@@ -275,6 +277,7 @@ onUnmounted(() => {
 				transition: all 0.3s ease;
 				width: 35px;
 			}
+
 			&:hover {
 				border: 1px solid rgba(255, 255, 255, 0.5);
 				background: rgba(255, 255, 255, 0.2);
@@ -282,10 +285,12 @@ onUnmounted(() => {
 				color: var(--el-color-white);
 				opacity: 1;
 				transition: all 0.3s ease;
+
 				i {
 					transform: translateY(-40px);
 					transition: all 0.3s ease;
 				}
+
 				.layout-lock-screen-date-top-text {
 					opacity: 1;
 					top: 50%;
@@ -294,6 +299,7 @@ onUnmounted(() => {
 			}
 		}
 	}
+
 	&-login {
 		position: relative;
 		z-index: 9999994;
@@ -305,33 +311,40 @@ onUnmounted(() => {
 		flex-direction: column;
 		justify-content: center;
 		color: var(--el-color-white);
+
 		&-box {
 			text-align: center;
 			margin: auto;
+
 			&-img {
 				width: 180px;
 				height: 180px;
 				margin: auto;
+
 				img {
 					width: 100%;
 					height: 100%;
 					border-radius: 100%;
 				}
 			}
+
 			&-name {
 				font-size: 26px;
 				margin: 15px 0 30px;
 			}
 		}
+
 		&-icon {
 			position: absolute;
 			right: 30px;
 			bottom: 30px;
+
 			i {
 				font-size: 20px;
 				margin-left: 15px;
 				cursor: pointer;
 				opacity: 0.8;
+
 				&:hover {
 					opacity: 1;
 				}
@@ -339,12 +352,15 @@ onUnmounted(() => {
 		}
 	}
 }
+
 :deep(.el-input-group__append) {
 	background: var(--el-color-white);
 	padding: 0px 15px;
 }
+
 :deep(.el-input__inner) {
 	border-right-color: var(--el-border-color-extra-light);
+
 	&:hover {
 		border-color: var(--el-border-color-extra-light);
 	}

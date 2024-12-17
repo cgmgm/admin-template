@@ -1,6 +1,6 @@
 import { createVNode, render, type Component, type VNode, createApp } from 'vue'
-import dialogWrap from '/@/components/dialogWrap/index.vue'
-import { i18n } from '/@/i18n/index'
+import dialogWrap from '@/components/dialogWrap/index.vue'
+import { i18n } from '@/i18n/index'
 
 interface DialogOptions {
     modal?: boolean

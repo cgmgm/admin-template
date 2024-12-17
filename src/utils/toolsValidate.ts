@@ -368,3 +368,11 @@ export function verifyCarNum(val: string) {
 	// true：车牌号正确
 	else return true;
 }
+
+/**
+ * @param {string} path
+ * @returns {Boolean}
+ */
+export function isExternal(path: string) {
+	return /^(https?:|mailto:|tel:)/.test(path)
+}

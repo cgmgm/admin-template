@@ -16,7 +16,7 @@
 <script setup lang="ts" name="layoutLinkView">
 import { reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { verifyUrl } from '/@/utils/toolsValidate';
+import { verifyUrl } from '@/utils/toolsValidate';
 
 // 定义变量内容
 const route = useRoute();
@@ -52,10 +52,12 @@ watch(
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+
 		i.layout-link-icon {
 			position: relative;
 			font-size: 100px;
 			color: var(--el-color-primary);
+
 			&::after {
 				content: '';
 				position: absolute;
@@ -63,25 +65,24 @@ watch(
 				top: 0;
 				width: 15px;
 				height: 100px;
-				background: linear-gradient(
-					rgba(255, 255, 255, 0.01),
-					rgba(255, 255, 255, 0.01),
-					rgba(255, 255, 255, 0.01),
-					rgba(255, 255, 255, 0.05),
-					rgba(255, 255, 255, 0.05),
-					rgba(255, 255, 255, 0.05),
-					rgba(235, 255, 255, 0.5),
-					rgba(255, 255, 255, 0.05),
-					rgba(255, 255, 255, 0.05),
-					rgba(255, 255, 255, 0.05),
-					rgba(255, 255, 255, 0.01),
-					rgba(255, 255, 255, 0.01),
-					rgba(255, 255, 255, 0.01)
-				);
+				background: linear-gradient(rgba(255, 255, 255, 0.01),
+						rgba(255, 255, 255, 0.01),
+						rgba(255, 255, 255, 0.01),
+						rgba(255, 255, 255, 0.05),
+						rgba(255, 255, 255, 0.05),
+						rgba(255, 255, 255, 0.05),
+						rgba(235, 255, 255, 0.5),
+						rgba(255, 255, 255, 0.05),
+						rgba(255, 255, 255, 0.05),
+						rgba(255, 255, 255, 0.05),
+						rgba(255, 255, 255, 0.01),
+						rgba(255, 255, 255, 0.01),
+						rgba(255, 255, 255, 0.01));
 				transform: rotate(-15deg);
 				animation: toRight 5s linear infinite;
 			}
 		}
+
 		.layout-link-msg {
 			font-size: 12px;
 			color: var(--next-bg-topBarColor);

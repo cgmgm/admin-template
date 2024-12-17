@@ -92,8 +92,8 @@
 import { reactive, onMounted, onUnmounted, ref } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts/extension/bmap/bmap';
-import { formatDate } from '/@/utils/formatTime';
-import { NextLoading } from '/@/utils/loading';
+import { formatDate } from '@/utils/formatTime';
+import { NextLoading } from '@/utils/loading';
 import { echartsMapList, echartsMapData, echartsMapImgs } from './mock/demo1';
 
 // 定义变量内容
@@ -955,16 +955,20 @@ $lrWidth: 288px;
 $cheight: 240px;
 // 标题宽度
 $titleWidth: 240px;
+
 .visualizing-demo1 {
 	height: 100%;
 	width: 100%;
 	position: relative;
+
 	:deep(.BMap_cpyCtrl) {
 		display: none;
 	}
+
 	:deep(.anchorBL) {
 		display: none;
 	}
+
 	.visualizing-container {
 		.visualizing-container-head {
 			height: 60px;
@@ -977,10 +981,12 @@ $titleWidth: 240px;
 			color: #ffffff;
 			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.02));
 			z-index: 3;
+
 			.visualizing-container-head-left {
 				flex: 1;
 				position: relative;
 				height: 60px;
+
 				.visualizing-container-head-left-text {
 					position: relative;
 					z-index: 1;
@@ -990,10 +996,12 @@ $titleWidth: 240px;
 					padding-left: 15px;
 					top: 50%;
 					transform: translateY(-100%);
+
 					.visualizing-container-head-left-text-box {
 						width: 100%;
 						position: relative;
 						padding-left: 15px;
+
 						&::after {
 							content: '';
 							height: 20px;
@@ -1006,6 +1014,7 @@ $titleWidth: 240px;
 						}
 					}
 				}
+
 				&::before,
 				&::after {
 					content: '';
@@ -1014,16 +1023,19 @@ $titleWidth: 240px;
 					position: absolute;
 					width: 100%;
 				}
+
 				&::before {
 					top: 1px;
 					right: 33px;
 					opacity: 0.8;
 				}
+
 				&::after {
 					top: 41px;
 					right: -2px;
 				}
 			}
+
 			.visualizing-container-head-center {
 				height: 60px;
 				font-size: 18px;
@@ -1033,12 +1045,15 @@ $titleWidth: 240px;
 				position: relative;
 				padding: 0 60px;
 				background: radial-gradient(rgba(0, 0, 0, 0.7) 5%, rgba(0, 0, 0, 0.5) 15%, rgba(0, 0, 0, 0.02) 70%);
+
 				.visualizing-container-head-center-box {
 					margin: auto;
 					position: relative;
 					z-index: 1;
+
 					.visualizing-container-head-center-maintitle {
 						position: relative;
+
 						&::before,
 						&::after {
 							content: '';
@@ -1049,21 +1064,25 @@ $titleWidth: 240px;
 							opacity: 0.3;
 							border-top: 1px solid #16cfd0;
 						}
+
 						&::before {
 							left: -70px;
 							border-right: 2px solid #16cfd0;
 							transform: skew(50deg);
 						}
+
 						&::after {
 							right: -70px;
 							border-left: 2px solid #16cfd0;
 							transform: skew(-50deg);
 						}
 					}
+
 					.visualizing-container-head-center-subtitle {
 						font-size: 14px;
 						opacity: 0.8;
 						position: relative;
+
 						&::before,
 						&::after {
 							content: '';
@@ -1073,12 +1092,14 @@ $titleWidth: 240px;
 							bottom: 8px;
 							border-bottom: 2px solid #16cfd0;
 						}
+
 						&::before {
 							transform: skew(50deg);
 							left: -33px;
 							border-left: 3px solid #16cfd0;
 							border-image: linear-gradient(to right, #16cfd0, rgba(22, 207, 208, 0.02)) 1 10;
 						}
+
 						&::after {
 							transform: skew(-50deg);
 							right: -33px;
@@ -1086,6 +1107,7 @@ $titleWidth: 240px;
 							border-image: linear-gradient(to left, rgba(22, 207, 208, 1), rgba(22, 207, 208, 0.02)) 1 10;
 						}
 					}
+
 					&::before,
 					&::after {
 						content: '';
@@ -1095,17 +1117,20 @@ $titleWidth: 240px;
 						top: -8px;
 						border-bottom: 2px solid rgba(22, 207, 208, 0.7);
 					}
+
 					&::before {
 						transform: skew(32deg);
 						left: -89px;
 						border-left: 3px solid rgba(22, 207, 208, 0.7);
 					}
+
 					&::after {
 						transform: skew(-32deg);
 						right: -89px;
 						border-right: 3px solid rgba(22, 207, 208, 0.7);
 					}
 				}
+
 				&::before,
 				&::after {
 					content: '';
@@ -1115,21 +1140,25 @@ $titleWidth: 240px;
 					bottom: 0px;
 					border-bottom: 4px solid #16cfd0;
 				}
+
 				&::before {
 					transform: skew(60deg);
 					left: 13px;
 					border-left: 5px solid #16cfd0;
 				}
+
 				&::after {
 					transform: skew(-60deg);
 					right: 13px;
 					border-right: 5px solid #16cfd0;
 				}
 			}
+
 			.visualizing-container-head-right {
 				flex: 1;
 				position: relative;
 				height: 60px;
+
 				.visualizing-container-head-right-text {
 					position: relative;
 					z-index: 1;
@@ -1141,10 +1170,12 @@ $titleWidth: 240px;
 					padding-right: 15px;
 					top: 50%;
 					transform: translateY(-100%);
+
 					.visualizing-container-head-right-text-box {
 						width: 100%;
 						position: relative;
 						padding-right: 15px;
+
 						&::after {
 							content: '';
 							height: 20px;
@@ -1157,6 +1188,7 @@ $titleWidth: 240px;
 						}
 					}
 				}
+
 				&::before,
 				&::after {
 					content: '';
@@ -1165,17 +1197,20 @@ $titleWidth: 240px;
 					position: absolute;
 					width: 100%;
 				}
+
 				&::before {
 					top: 1px;
 					left: 33px;
 					opacity: 0.8;
 				}
+
 				&::after {
 					top: 41px;
 					left: -2px;
 				}
 			}
 		}
+
 		.visualizing-container-title {
 			max-width: $titleWidth;
 			font-size: 14px;
@@ -1185,10 +1220,12 @@ $titleWidth: 240px;
 			border-bottom: 1px solid #ffffff;
 			border-image: linear-gradient(to right, #ffffff, rgba(22, 207, 208, 0.02)) 1 10;
 			position: relative;
+
 			i {
 				padding-right: 5px;
 				color: orange;
 			}
+
 			&::after {
 				content: '';
 				position: absolute;
@@ -1199,6 +1236,7 @@ $titleWidth: 240px;
 				background: linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0.5));
 			}
 		}
+
 		.visualizing-container-title-colorful {
 			max-width: $titleWidth;
 			border: 0;
@@ -1208,6 +1246,7 @@ $titleWidth: 240px;
 			-webkit-mask-image: var(--mask-image);
 			mask-image: var(--mask-image);
 		}
+
 		.visualizing-container-content-left {
 			width: $lrWidth;
 			height: 100%;
@@ -1217,6 +1256,7 @@ $titleWidth: 240px;
 			background: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.01));
 			padding-top: 60px;
 			z-index: 2;
+
 			.visualizing-container-content-left-flex {
 				height: 50%;
 				display: flex;
@@ -1224,6 +1264,7 @@ $titleWidth: 240px;
 				padding-left: 15px;
 			}
 		}
+
 		.visualizing-container-content-center {
 			width: 100%;
 			height: $cheight;
@@ -1232,6 +1273,7 @@ $titleWidth: 240px;
 			left: 0;
 			background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.01));
 			z-index: 1;
+
 			.visualizing-container-content-center-bottom {
 				width: calc(100% - #{$lrWidth * 2});
 				height: $cheight;
@@ -1240,12 +1282,14 @@ $titleWidth: 240px;
 				position: absolute;
 				display: flex;
 				padding: 0 15px;
+
 				.visualizing-container-content-center-bottom-flex {
 					width: 50%;
 					padding: 0 15px;
 				}
 			}
 		}
+
 		.visualizing-container-content-right {
 			width: $lrWidth;
 			height: 100%;
@@ -1255,6 +1299,7 @@ $titleWidth: 240px;
 			padding-top: 60px;
 			background: linear-gradient(to left, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.01));
 			z-index: 2;
+
 			.visualizing-container-content-right-flex {
 				height: 50%;
 				display: flex;

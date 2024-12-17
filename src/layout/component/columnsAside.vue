@@ -4,8 +4,8 @@
 			<ul @mouseleave="onColumnsAsideMenuMouseleave()">
 				<li v-for="(v, k) in state.columnsAsideList" :key="k" @click="onColumnsAsideMenuClick(v)"
 					@mouseenter="onColumnsAsideMenuMouseenter(v, k)" :ref="(el) => {
-							if (el) columnsAsideOffsetTopRefs[k] = el;
-						}
+						if (el) columnsAsideOffsetTopRefs[k] = el;
+					}
 						" :class="{ 'layout-columns-active': state.liIndex === k, 'layout-columns-hover': state.liHoverIndex === k }"
 					:title="$t(v.meta.title)">
 					<div :class="themeConfig.columnsAsideLayout"
@@ -43,9 +43,9 @@
 import { reactive, ref, onMounted, nextTick, watch, onUnmounted } from 'vue';
 import { useRoute, useRouter, onBeforeRouteUpdate, RouteRecordRaw } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useRoutesList } from '/@/stores/routesList';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import mittBus from '/@/utils/mitt';
+import { useRoutesList } from '@/stores/routesList';
+import { useThemeConfig } from '@/stores/themeConfig';
+import mittBus from '@/utils/mitt';
 
 // 定义变量内容
 const columnsAsideOffsetTopRefs = ref<RefType>([]);

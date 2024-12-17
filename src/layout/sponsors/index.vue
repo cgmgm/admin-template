@@ -14,7 +14,7 @@
 
 <script setup lang="ts" name="layoutSponsors">
 import { reactive, computed, onMounted } from 'vue';
-import sponsorsOne from '/@/assets/ccflowRightNextAdmin.png';
+import sponsorsOne from '@/assets/ccflowRightNextAdmin.png';
 
 // 定义变量内容
 const state = reactive({
@@ -71,15 +71,18 @@ onMounted(() => {
 	border-radius: 5px;
 	overflow: hidden;
 	cursor: pointer;
+
 	.sponsors-img {
 		width: 100%;
 		height: 80px;
 	}
+
 	.sponsors-text {
 		padding: 10px;
 		color: var(--el-text-color-regular);
 		font-size: var(--el-dialog-content-font-size);
 	}
+
 	.sponsors-close {
 		width: 60px;
 		height: 60px;
@@ -89,6 +92,7 @@ onMounted(() => {
 		position: absolute;
 		right: -35px;
 		bottom: -35px;
+
 		:deep(i) {
 			position: absolute;
 			left: 9px;
@@ -96,8 +100,10 @@ onMounted(() => {
 			color: #afafaf;
 			transition: all 0.3s ease;
 		}
+
 		&:hover {
 			transition: all 0.3s ease;
+
 			:deep(i) {
 				color: var(--el-color-primary);
 				transition: all 0.3s ease;

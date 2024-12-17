@@ -2,14 +2,9 @@
 	<div class="layout-search-dialog">
 		<el-dialog v-model="state.isShowSearch" destroy-on-close :show-close="false">
 			<template #footer>
-				<el-autocomplete
-					v-model="state.menuQuery"
-					:fetch-suggestions="menuSearch"
-					:placeholder="$t('message.user.searchPlaceholder')"
-					ref="layoutMenuAutocompleteRef"
-					@select="onHandleSelect"
-					:fit-input-width="true"
-				>
+				<el-autocomplete v-model="state.menuQuery" :fetch-suggestions="menuSearch"
+					:placeholder="$t('message.user.searchPlaceholder')" ref="layoutMenuAutocompleteRef"
+					@select="onHandleSelect" :fit-input-width="true">
 					<template #prefix>
 						<el-icon class="el-input__icon">
 							<ele-Search />
@@ -32,7 +27,7 @@ import { reactive, ref, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
-import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
+import { useTagsViewRoutes } from '@/stores/tagsViewRoutes';
 
 // 定义变量内容
 const storesTagsViewRoutes = useTagsViewRoutes();
@@ -101,11 +96,14 @@ defineExpose({
 <style scoped lang="scss">
 .layout-search-dialog {
 	position: relative;
+
 	:deep(.el-dialog) {
+
 		.el-dialog__header,
 		.el-dialog__body {
 			display: none;
 		}
+
 		.el-dialog__footer {
 			width: 100%;
 			position: absolute;
@@ -114,6 +112,7 @@ defineExpose({
 			top: -53vh;
 		}
 	}
+
 	:deep(.el-autocomplete) {
 		width: 560px;
 		position: absolute;

@@ -8,7 +8,8 @@
 			</transition>
 		</router-view>
 		<transition :name="setTransitionName" mode="out-in">
-			<Iframes class="w100" v-show="isIframePage" :refreshKey="state.iframeRefreshKey" :name="setTransitionName" :list="state.iframeList" />
+			<Iframes class="w100" v-show="isIframePage" :refreshKey="state.iframeRefreshKey" :name="setTransitionName"
+				:list="state.iframeList" />
 		</transition>
 	</div>
 </template>
@@ -17,13 +18,13 @@
 import { defineAsyncComponent, computed, reactive, onBeforeMount, onUnmounted, nextTick, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useKeepALiveNames } from '/@/stores/keepAliveNames';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import { Session } from '/@/utils/storage';
-import mittBus from '/@/utils/mitt';
+import { useKeepALiveNames } from '@/stores/keepAliveNames';
+import { useThemeConfig } from '@/stores/themeConfig';
+import { Session } from '@/utils/storage';
+import mittBus from '@/utils/mitt';
 
 // 引入组件
-const Iframes = defineAsyncComponent(() => import('/@/layout/routerView/iframes.vue'));
+const Iframes = defineAsyncComponent(() => import('@/layout/routerView/iframes.vue'));
 
 // 定义变量内容
 const route = useRoute();
@@ -89,7 +90,7 @@ onMounted(() => {
 });
 // 页面卸载时
 onUnmounted(() => {
-	mittBus.off('onTagsViewRefreshRouterView', () => {});
+	mittBus.off('onTagsViewRefreshRouterView', () => { });
 });
 // 监听路由变化，防止 tagsView 多标签时，切换动画消失
 watch(

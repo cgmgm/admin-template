@@ -30,23 +30,16 @@
 				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button size="small" text type="primary" @click="onOpenEditDic('edit', scope.row)">修改</el-button>
+						<el-button size="small" text type="primary"
+							@click="onOpenEditDic('edit', scope.row)">修改</el-button>
 						<el-button size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="state.tableData.param.pageNum"
-				background
-				v-model:page-size="state.tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="state.tableData.total"
-			>
+			<el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" class="mt15"
+				:pager-count="5" :page-sizes="[10, 20, 30]" v-model:current-page="state.tableData.param.pageNum"
+				background v-model:page-size="state.tableData.param.pageSize"
+				layout="total, sizes, prev, pager, next, jumper" :total="state.tableData.total">
 			</el-pagination>
 		</el-card>
 		<DicDialog ref="dicDialogRef" @refresh="getTableData()" />
@@ -58,7 +51,7 @@ import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 
 // 引入组件
-const DicDialog = defineAsyncComponent(() => import('/@/views/system/dic/dialog.vue'));
+const DicDialog = defineAsyncComponent(() => import('@/views/system/dic/dialog.vue'));
 
 // 定义变量内容
 const dicDialogRef = ref();
@@ -113,7 +106,7 @@ const onRowDel = (row: RowDicType) => {
 			getTableData();
 			ElMessage.success('删除成功');
 		})
-		.catch(() => {});
+		.catch(() => { });
 };
 // 分页改变
 const onHandleSizeChange = (val: number) => {

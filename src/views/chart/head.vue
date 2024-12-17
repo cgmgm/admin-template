@@ -12,7 +12,7 @@
 
 <script setup lang="ts" name="chartHead">
 import { reactive, onBeforeMount, onUnmounted } from 'vue';
-import { formatDate } from '/@/utils/formatTime';
+import { formatDate } from '@/utils/formatTime';
 
 // 定义变量内容
 const state = reactive({
@@ -49,23 +49,23 @@ onUnmounted(() => {
 	color: var(--el-color-primary);
 	overflow: hidden;
 	position: relative;
+
 	.up-left {
 		position: absolute;
 	}
+
 	.up-center {
 		width: 100%;
 		display: flex;
 		justify-content: center;
 		font-size: 18px;
 		letter-spacing: 5px;
-		background-image: -webkit-linear-gradient(
-			left,
-			var(--el-color-primary),
-			var(--el-color-primary-light-3) 25%,
-			var(--el-color-primary) 50%,
-			var(--el-color-primary-light-3) 75%,
-			var(--el-color-primary)
-		);
+		background-image: -webkit-linear-gradient(left,
+				var(--el-color-primary),
+				var(--el-color-primary-light-3) 25%,
+				var(--el-color-primary) 50%,
+				var(--el-color-primary-light-3) 75%,
+				var(--el-color-primary));
 		-webkit-text-fill-color: transparent;
 		-webkit-background-clip: text;
 		background-clip: text;
@@ -74,15 +74,19 @@ onUnmounted(() => {
 		animation: masked-animation-data-v-b02d8052 4s linear infinite;
 		-webkit-box-reflect: below -2px -webkit-gradient(linear, left top, left bottom, from(transparent), to(hsla(0, 0%, 100%, 0.1)));
 		position: relative;
+
 		@keyframes masked-animation {
 			0% {
 				background-position: 0 0;
 			}
+
 			100% {
 				background-position: -100% 0;
 			}
 		}
+
 		position: relative;
+
 		&::after {
 			content: '';
 			width: 250px;
@@ -93,6 +97,7 @@ onUnmounted(() => {
 			border: 1px transparent solid;
 			border-image: linear-gradient(to right, var(--el-color-primary-light-9), var(--el-color-primary)) 1 10;
 		}
+
 		span {
 			cursor: pointer;
 		}

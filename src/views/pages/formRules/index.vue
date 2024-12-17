@@ -1,8 +1,14 @@
 <template>
 	<div class="form-rules-container layout-pd">
-		<el-card shadow="hover" header="表单组件1"> <FormRulesOne :data="state.formRulesOneData" ref="pagesFormRulesOneRef" /></el-card>
-		<el-card shadow="hover" header="表单组件2" class="mt15"><FormRulesTwo ref="pagesFormRulesTwoRef" /> </el-card>
-		<el-card shadow="hover" header="表单组件3" class="mt15"> <FormRulesThree ref="pagesFormRulesThreeRef" /></el-card>
+		<el-card shadow="hover" header="表单组件1">
+			<FormRulesOne :data="state.formRulesOneData" ref="pagesFormRulesOneRef" />
+		</el-card>
+		<el-card shadow="hover" header="表单组件2" class="mt15">
+			<FormRulesTwo ref="pagesFormRulesTwoRef" />
+		</el-card>
+		<el-card shadow="hover" header="表单组件3" class="mt15">
+			<FormRulesThree ref="pagesFormRulesThreeRef" />
+		</el-card>
 		<el-row class="flex mt15">
 			<div class="flex-margin">
 				<el-button size="default" @click="onResetForm">
@@ -23,9 +29,9 @@ import { defineAsyncComponent, reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 
 // 引入组件
-const FormRulesOne = defineAsyncComponent(() => import('/@/views/pages/formRules/component/formRulesOne.vue'));
-const FormRulesTwo = defineAsyncComponent(() => import('/@/views/pages/formRules/component/formRulesTwo.vue'));
-const FormRulesThree = defineAsyncComponent(() => import('/@/views/pages/formRules/component/formRulesThree.vue'));
+const FormRulesOne = defineAsyncComponent(() => import('@/views/pages/formRules/component/formRulesOne.vue'));
+const FormRulesTwo = defineAsyncComponent(() => import('@/views/pages/formRules/component/formRulesTwo.vue'));
+const FormRulesThree = defineAsyncComponent(() => import('@/views/pages/formRules/component/formRulesThree.vue'));
 
 // 定义变量内容
 const pagesFormRulesOneRef = ref();

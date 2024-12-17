@@ -12,12 +12,12 @@
 
 <script setup lang="tsx" name="makeTableDemo">
 import { defineAsyncComponent, reactive, ref } from 'vue';
-import { createTableConfig, createColumn, createSearchItem, createCurrency, createDeskList } from '/@/components/table/template';
-import type { TableData } from '/@/components/table/types';
+import { createTableConfig, createColumn, createSearchItem, createCurrency, createDeskList } from '@/components/table/template';
+import type { TableData } from '@/components/table/types';
 
 // 引入组件
-const Table = defineAsyncComponent(() => import('/@/components/table/index.vue'));
-const AddInfo = defineAsyncComponent(() => import('/@/views/make/tableDemo/addInfo.vue'));
+const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
+const AddInfo = defineAsyncComponent(() => import('@/views/make/tableDemo/addInfo.vue'));
 // 定义变量内容
 const tableRef = ref();
 const state = reactive<{ tableData: TableData }>({

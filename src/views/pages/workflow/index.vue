@@ -10,18 +10,15 @@
 				<div class="workflow-content">
 					<div class="workflow-left">
 						<el-scrollbar>
-							<div
-								ref="leftNavRefs"
-								v-for="val in state.leftNavList"
-								:key="val.id"
+							<div ref="leftNavRefs" v-for="val in state.leftNavList" :key="val.id"
 								:style="{ height: val.isOpen ? 'auto' : '50px', overflow: 'hidden' }"
-								class="workflow-left-id"
-							>
+								class="workflow-left-id">
 								<div class="workflow-left-title" @click="onTitleClick(val)">
 									<span>{{ val.title }}</span>
 									<SvgIcon :name="val.isOpen ? 'ele-ArrowDown' : 'ele-ArrowRight'" />
 								</div>
-								<div class="workflow-left-item" v-for="(v, k) in val.children" :key="k" :data-name="v.name" :data-icon="v.icon" :data-id="v.id">
+								<div class="workflow-left-item" v-for="(v, k) in val.children" :key="k"
+									:data-name="v.name" :data-icon="v.icon" :data-id="v.id">
 									<div class="workflow-left-item-icon">
 										<SvgIcon :name="v.icon" class="workflow-icon-drag" />
 										<div class="font10 pl5 name">{{ v.name }}</div>
@@ -33,17 +30,11 @@
 
 					<!-- 右侧绘画区 -->
 					<div class="workflow-right" ref="workflowRightRef">
-						<div
-							v-for="(v, k) in state.jsplumbData.nodeList"
-							:key="v.nodeId"
-							:id="v.nodeId"
-							:data-node-id="v.nodeId"
-							:class="v.class"
-							:style="{ left: v.left, top: v.top }"
-							@click="onItemCloneClick(k)"
-							@contextmenu.prevent="onContextmenu(v, k, $event)"
-						>
-							<div class="workflow-right-box" :class="{ 'workflow-right-active': state.jsPlumbNodeIndex === k }">
+						<div v-for="(v, k) in state.jsplumbData.nodeList" :key="v.nodeId" :id="v.nodeId"
+							:data-node-id="v.nodeId" :class="v.class" :style="{ left: v.left, top: v.top }"
+							@click="onItemCloneClick(k)" @contextmenu.prevent="onContextmenu(v, k, $event)">
+							<div class="workflow-right-box"
+								:class="{ 'workflow-right-active': state.jsPlumbNodeIndex === k }">
 								<div class="workflow-left-item-icon">
 									<SvgIcon :name="v.icon" class="workflow-icon-drag" />
 									<div class="font10 pl5 name">{{ v.name }}</div>
@@ -73,9 +64,9 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { jsPlumb } from 'jsplumb';
 import Sortable from 'sortablejs';
 import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
-import commonFunction from '/@/utils/commonFunction';
+import { useThemeConfig } from '@/stores/themeConfig';
+import { useTagsViewRoutes } from '@/stores/tagsViewRoutes';
+import commonFunction from '@/utils/commonFunction';
 import { leftNavList } from './js/mock';
 import { jsplumbDefaults, jsplumbMakeSource, jsplumbMakeTarget, jsplumbConnect } from './js/config';
 
@@ -452,7 +443,7 @@ const onToolDel = () => {
 				ElMessage.success('清空画布成功');
 			});
 		})
-		.catch(() => {});
+		.catch(() => { });
 };
 // 顶部工具栏-全屏
 const onToolFullscreen = () => {
@@ -475,9 +466,11 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .workflow-container {
 	position: relative;
+
 	.workflow-warp {
 		position: relative;
 	}
+
 	.workflow {
 		display: flex;
 		height: 100%;
@@ -486,16 +479,20 @@ onUnmounted(() => {
 		position: absolute;
 		top: 0;
 		left: 0;
+
 		.workflow-content {
 			display: flex;
 			height: calc(100% - 35px);
+
 			.workflow-left {
 				width: 220px;
 				height: 100%;
 				border-right: 1px solid var(--el-border-color-light, #ebeef5);
+
 				:deep(.el-collapse-item__content) {
 					padding-bottom: 0;
 				}
+
 				.workflow-left-title {
 					height: 50px;
 					display: flex;
@@ -504,16 +501,19 @@ onUnmounted(() => {
 					border-top: 1px solid var(--el-border-color-light, #ebeef5);
 					color: var(--el-text-color-primary);
 					cursor: default;
+
 					span {
 						flex: 1;
 					}
 				}
+
 				.workflow-left-item {
 					display: inline-block;
 					width: calc(50% - 15px);
 					position: relative;
 					cursor: move;
 					margin: 0 0 10px 10px;
+
 					.workflow-left-item-icon {
 						height: 35px;
 						display: flex;
@@ -523,6 +523,7 @@ onUnmounted(() => {
 						border: 1px dashed transparent;
 						background: var(--next-bg-color);
 						border-radius: 3px;
+
 						i,
 						.name {
 							color: var(--el-text-color-secondary);
@@ -531,11 +532,13 @@ onUnmounted(() => {
 							text-overflow: ellipsis;
 							overflow: hidden;
 						}
+
 						&:hover {
 							transition: all 0.3s ease;
 							border: 1px dashed var(--el-color-primary);
 							background: var(--el-color-primary-light-9);
 							border-radius: 5px;
+
 							i,
 							.name {
 								transition: all 0.3s ease;
@@ -544,12 +547,14 @@ onUnmounted(() => {
 						}
 					}
 				}
+
 				& .workflow-left-id:first-of-type {
 					.workflow-left-title {
 						border-top: none;
 					}
 				}
 			}
+
 			.workflow-right {
 				flex: 1;
 				position: relative;
@@ -558,8 +563,10 @@ onUnmounted(() => {
 				background-image: linear-gradient(90deg, rgb(156 214 255 / 15%) 10%, rgba(0, 0, 0, 0) 10%),
 					linear-gradient(rgb(156 214 255 / 15%) 10%, rgba(0, 0, 0, 0) 10%);
 				background-size: 10px 10px;
+
 				.workflow-right-clone {
 					position: absolute;
+
 					.workflow-right-box {
 						height: 35px;
 						align-items: center;
@@ -571,27 +578,32 @@ onUnmounted(() => {
 						min-width: 94.5px;
 						background: var(--el-color-white);
 						border: 1px solid var(--el-border-color-light, #ebeef5);
+
 						.workflow-left-item-icon {
 							display: flex;
 							align-items: center;
 							height: 35px;
 						}
+
 						&:hover {
 							border: 1px dashed var(--el-color-primary);
 							background: var(--el-color-primary-light-9);
 							transition: all 0.3s ease;
 							color: var(--el-color-primary);
+
 							i {
 								cursor: Crosshair;
 							}
 						}
 					}
+
 					.workflow-right-active {
 						border: 1px dashed var(--el-color-primary);
 						background: var(--el-color-primary-light-9);
 						color: var(--el-color-primary);
 					}
 				}
+
 				:deep(.jtk-overlay):not(.aLabel) {
 					padding: 4px 10px;
 					border: 1px solid var(--el-border-color-light, #ebeef5) !important;
@@ -600,18 +612,21 @@ onUnmounted(() => {
 					border-radius: 3px;
 					font-size: 10px;
 				}
+
 				:deep(.jtk-overlay.workflow-right-empty-label) {
 					display: none;
 				}
 			}
 		}
 	}
+
 	.workflow-mask {
 		position: absolute;
 		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
+
 		&::after {
 			content: '手机版不支持 jsPlumb 操作';
 			position: absolute;

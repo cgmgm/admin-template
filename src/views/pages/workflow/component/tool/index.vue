@@ -2,7 +2,8 @@
 	<div class="workflow-tool">
 		<div class="pl15">{{ setToolTitle }}</div>
 		<div class="workflow-tool-right">
-			<div class="workflow-tool-icon" v-for="(v, k) in state.toolList" :key="k" :title="v.title" @click="onToolClick(v.fnName)">
+			<div class="workflow-tool-icon" v-for="(v, k) in state.toolList" :key="k" :title="v.title"
+				@click="onToolClick(v.fnName)">
 				<SvgIcon :name="v.icon" />
 			</div>
 		</div>
@@ -12,7 +13,7 @@
 <script setup lang="ts" name="pagesWorkflowTool">
 import { computed, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
+import { useThemeConfig } from '@/stores/themeConfig';
 
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['tool']);
@@ -49,11 +50,13 @@ const onToolClick = (fnName: string) => {
 	align-items: center;
 	border-bottom: 1px solid var(--el-border-color-light, #ebeef5);
 	color: var(--el-text-color-primary);
+
 	.workflow-tool-right {
 		flex: 1;
 		display: flex;
 		justify-content: flex-end;
 	}
+
 	&-icon {
 		padding: 0 10px;
 		cursor: pointer;
@@ -62,8 +65,10 @@ const onToolClick = (fnName: string) => {
 		line-height: 35px;
 		display: flex;
 		align-items: center;
+
 		&:hover {
 			background: rgba(0, 0, 0, 0.04);
+
 			i {
 				display: inline-block;
 				animation: logoAnimation 0.3s ease-in-out;

@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
 import { resolve } from 'path';
 import { defineConfig, loadEnv, ConfigEnv } from 'vite';
 import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
@@ -11,7 +10,7 @@ const pathResolve = (dir: string) => {
 };
 
 const alias: Record<string, string> = {
-	'/@': pathResolve('./src/'),
+	'@': pathResolve('./src/'),
 	'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
 };
 
@@ -20,10 +19,8 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 	return {
 		plugins: [
 			vue(),
-			vueJsx(),
 			vueSetupExtend(),
-			viteCompression(),
-			JSON.parse(env.VITE_OPEN_CDN) ? buildConfig.cdn() : null
+			viteCompression()
 		],
 		root: process.cwd(),
 		resolve: { alias },
@@ -32,14 +29,13 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 		server: {
 			host: '0.0.0.0',
 			port: env.VITE_PORT as unknown as number,
-			open: JSON.parse(env.VITE_OPEN),
-			hmr: true,
+			open: env.VITE_OPEN,
 			proxy: {
-				'/gitee': {
-					target: 'https://gitee.com',
+				'/api': {
+					target: env.VITE_API_PROXY,
 					ws: true,
 					changeOrigin: true,
-					rewrite: (path) => path.replace(/^\/gitee/, ''),
+					rewrite: path => path.replace(/^\/api/, ''),
 				},
 			},
 		},
@@ -56,8 +52,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 							return id.toString().match(/\/node_modules\/(?!.pnpm)(?<moduleName>[^\/]*)\//)?.groups!.moduleName ?? 'vender';
 						}
 					},
-				},
-				...(JSON.parse(env.VITE_OPEN_CDN) ? { external: buildConfig.external } : {}),
+				}
 			},
 		},
 		css: { preprocessorOptions: { css: { charset: false } } },

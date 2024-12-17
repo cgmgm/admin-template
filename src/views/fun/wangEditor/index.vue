@@ -1,13 +1,10 @@
 <template>
 	<div class="editor-container layout-pd">
 		<el-card shadow="hover" header="wangeditor富文本编辑器">
-			<el-alert
-				title="感谢优秀的 `wangeditor`，项目地址：https://github.com/wangeditor-team/wangEditor"
-				type="success"
-				:closable="false"
-				class="mb15"
-			></el-alert>
-			<Editor v-model:get-html="state.editor.htmlVal" v-model:get-text="state.editor.textVal" :disable="state.editor.disable" />
+			<el-alert title="感谢优秀的 `wangeditor`，项目地址：https://github.com/wangeditor-team/wangEditor" type="success"
+				:closable="false" class="mb15"></el-alert>
+			<Editor v-model:get-html="state.editor.htmlVal" v-model:get-text="state.editor.textVal"
+				:disable="state.editor.disable" />
 		</el-card>
 	</div>
 </template>
@@ -16,7 +13,7 @@
 import { defineAsyncComponent, reactive } from 'vue';
 
 // 引入组件
-const Editor = defineAsyncComponent(() => import('/@/components/editor/index.vue'));
+const Editor = defineAsyncComponent(() => import('@/components/editor/index.vue'));
 
 // 定义变量内容
 const state = reactive({

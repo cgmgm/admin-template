@@ -19,7 +19,7 @@
 
 <script setup lang="ts" name="pagesIocnfont">
 import { reactive, onMounted } from 'vue';
-import initIconfont from '/@/utils/getStyleSheets';
+import initIconfont from '@/utils/getStyleSheets';
 
 // 定义变量内容
 const state = reactive({
@@ -41,6 +41,7 @@ onMounted(() => {
 	.iconfont-row {
 		border-top: 1px solid var(--next-border-color-light);
 		border-left: 1px solid var(--next-border-color-light);
+
 		.iconfont-warp {
 			text-align: center;
 			border-right: 1px solid var(--next-border-color-light);
@@ -49,21 +50,25 @@ onMounted(() => {
 			overflow: hidden;
 			display: flex;
 			transition: all 0.3s ease;
+
 			&:hover {
 				box-shadow: 0 2px 12px var(--next-color-dark-hover);
 				cursor: pointer;
 				transition: all 0.3s ease;
+
 				.iconfont-warp-value {
 					i {
 						color: var(--el-color-primary);
 						transition: all 0.3s ease;
 					}
 				}
+
 				.iconfont-warp-label {
 					color: var(--el-color-primary);
 					transition: all 0.3s ease;
 				}
 			}
+
 			.iconfont-warp-value {
 				i {
 					color: #606266;
@@ -71,6 +76,7 @@ onMounted(() => {
 					transition: all 0.3s ease;
 				}
 			}
+
 			.iconfont-warp-label {
 				color: #99a9bf;
 				transition: all 0.3s ease;

@@ -1,16 +1,17 @@
 import { RouteRecordRaw } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import pinia from '/@/stores/index';
-import { useUserInfo } from '/@/stores/userInfo';
-import { useRequestOldRoutes } from '/@/stores/requestOldRoutes';
-import { Session } from '/@/utils/storage';
-import { NextLoading } from '/@/utils/loading';
-import { dynamicRoutes, notFoundAndNoPower } from '/@/router/route';
-import { formatTwoStageRoutes, formatFlatteningRoutes, router } from '/@/router/index';
-import { useRoutesList } from '/@/stores/routesList';
-import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
-import { useMenuApi } from '/@/api/menu/index';
-
+import pinia from '@/stores/index';
+import { useUserInfo } from '@/stores/userInfo';
+import { useRequestOldRoutes } from '@/stores/requestOldRoutes';
+import { Session } from '@/utils/storage';
+import { NextLoading } from '@/utils/loading';
+import { dynamicRoutes, notFoundAndNoPower } from '@/router/route';
+import { formatTwoStageRoutes, formatFlatteningRoutes, router } from '@/router/index';
+import { useRoutesList } from '@/stores/routesList';
+import { useTagsViewRoutes } from '@/stores/tagsViewRoutes';
+import { useMenuApi } from '@/api/menu/index';
+import { handleTree } from '../utils';
+import { isExternal } from "@/utils/toolsValidate";
 // 后端控制路由
 
 // 引入 api 请求接口
@@ -25,6 +26,34 @@ const layouModules: any = import.meta.glob('../layout/routerView/*.{vue,tsx}');
 const viewsModules: any = import.meta.glob('../views/**/*.{vue,tsx}');
 const dynamicViewsModules: Record<string, Function> = Object.assign({}, { ...layouModules }, { ...viewsModules });
 
+
+function firstToLower(str: string) {
+	return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toLowerCase());
+}
+
+
+function getName(path: string) {
+	let paths = path.split("/")
+	if (paths.length > 0) {
+		let result = ""
+		paths.forEach(item => {
+			if (item) {
+				result += firstToLower(item)
+			}
+		})
+		return result;
+	}
+	return path;
+}
+
+function getPanretRedirctPath(data: any) {
+	data.forEach((item: any) => {
+		if (item.children && item.children.length > 0) {
+			item.redirect = item.children[0].path;
+			getPanretRedirctPath(item.children)
+		}
+	});
+}
 /**
  * 后端控制路由：初始化方法，防止刷新时路由丢失
  * @method NextLoading 界面 loading 动画开始执行
@@ -39,15 +68,61 @@ export async function initBackEndControlRoutes() {
 	// 无 token 停止执行下一步
 	if (!Session.get('token')) return false;
 	// 触发初始化用户信息 pinia
+	// https://gitee.com/lyt-top/vue-next-admin/issues/I5F1HP
 	await useUserInfo().setUserInfos();
 	// 获取路由菜单数据
 	const res = await getBackEndControlRoutes();
-	// 无登录权限时，添加判断
-	if (res.data.length <= 0) return Promise.resolve(true);
+	// // 无登录权限时，添加判断
+	// // https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
+	// if (res.data.length <= 0) return Promise.resolve(true);
+	// // 存储接口原始路由（未处理component），根据需求选择使用
+	// useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(res.data)));
+	// // 处理路由（component），替换 dynamicRoutes（@/router/route）第一个顶级 children 的路由
+	// dynamicRoutes[0].children = await backEndComponent(res.data);
+
+
+	let data: any = []
+	if (res.data.list) {
+		res.data.list.forEach((item: any) => {
+			let itemdata = {
+				"path": item.path,
+				"name": getName(item.path),
+				"component": item.component,
+				"menuId": item.menuId,
+				"parentId": item.parentId,
+				meta: {
+					"title": item.menuName,
+					"isLink": item.isLink,
+					"isHide": item.isHide == '1',
+					"isKeepAlive": item.isKeepAlive == '1',
+					"isAffix": item.isAffix == '1',
+					"isIframe": item.isIframe == '1',
+					"roles": ["admin", "common"],
+					"icon": item.icon
+				}
+			}
+			data.push(itemdata)
+		});
+
+		data = handleTree(data, "menuId", "parentId", "children")
+		getPanretRedirctPath(data)
+	}
+
+
 	// 存储接口原始路由（未处理component），根据需求选择使用
-	useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(res.data)));
-	// 处理路由（component），替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
-	dynamicRoutes[0].children = await backEndComponent(res.data);
+	// useRequestOldRoutes().setRequestOldRoutes(data);
+
+	// 处理路由（component），替换 dynamicRoutes（@/router/route）第一个顶级 children 的路由
+	// dynamicRoutes[0].children = await backEndComponent(data);
+	dynamicRoutes[0].children = await backEndComponent(data);
+	//默认打开路由的第一个页面
+	if (dynamicRoutes[0].children?.length > 0) {
+		const route = findFirstValidRoute(dynamicRoutes[0].children);
+		if (route) {
+			dynamicRoutes[0].redirect = route.redirect ? route.redirect : route.path;
+		}
+	}
+
 	// 添加动态路由
 	await setAddRoute();
 	// 设置路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
@@ -63,6 +138,12 @@ export async function setFilterMenuAndCacheTagsViewRoutes() {
 	const storesRoutesList = useRoutesList(pinia);
 	storesRoutesList.setRoutesList(dynamicRoutes[0].children as any);
 	setCacheTagsViewRoutes();
+
+	// const stores = useUserInfo(pinia);
+	// const storesRoutesList = useRoutesList(pinia);
+	// const { userInfos } = storeToRefs(stores);
+	// storesRoutesList.setRoutesList(setFilterHasRolesMenu(dynamicRoutes[0].children, userInfos.value.roles));
+	// setCacheTagsViewRoutes();
 }
 
 /**
@@ -72,11 +153,12 @@ export async function setFilterMenuAndCacheTagsViewRoutes() {
 export function setCacheTagsViewRoutes() {
 	const storesTagsView = useTagsViewRoutes(pinia);
 	storesTagsView.setTagsViewRoutes(formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))[0].children);
+
 }
 
 /**
  * 处理路由格式及添加捕获所有路由或 404 Not found 路由
- * @description 替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
+ * @description 替换 dynamicRoutes（@/router/route）第一个顶级 children 的路由
  * @returns 返回替换后的路由数组
  */
 export function setFilterRouteEnd() {
@@ -90,7 +172,7 @@ export function setFilterRouteEnd() {
 /**
  * 添加动态路由
  * @method router.addRoute
- * @description 此处循环为 dynamicRoutes（/@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
+ * @description 此处循环为 dynamicRoutes（@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
  * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
  */
 export async function setAddRoute() {
@@ -105,11 +187,30 @@ export async function setAddRoute() {
  * @returns 返回后端路由菜单数据
  */
 export function getBackEndControlRoutes() {
-	// 模拟 admin 与 test
-	const stores = useUserInfo(pinia);
-	const { userInfos } = storeToRefs(stores);
-	const auth = userInfos.value.roles[0];
-	return menuApi.getMenu();
+	return menuApi.getMenu()
+	// return {
+	// 	"code": 0,
+	// 	"type": "adminMenu",
+	// 	"data": [
+	// 		{
+	// 			"path": "/home",
+	// 			"name": "home",
+	// 			"component": "home/index",
+	// 			"meta": {
+	// 				"title": "message.router.home",
+	// 				"isLink": "",
+	// 				"isHide": false,
+	// 				"isKeepAlive": true,
+	// 				"isAffix": true,
+	// 				"isIframe": false,
+	// 				"roles": [
+	// 					"admin",
+	// 					"common"
+	// 				],
+	// 				"icon": "iconfont icon-shouye"
+	// 			}
+	// 		}]
+	// }
 }
 
 /**
@@ -154,4 +255,22 @@ export function dynamicImport(dynamicViewsModules: Record<string, Function>, com
 	if (matchKeys?.length > 1) {
 		return false;
 	}
+}
+
+export function findFirstValidRoute(routes: RouteRecordRaw[]): RouteRecordRaw | undefined {
+	for (const route of routes) {
+		if (!route.meta?.isHide && !isExternal(route.path)) {
+			return route
+		}
+		if (route.children) {
+			const returnRoute = findFirstValidRoute(route.children)
+			if (returnRoute) {
+				return returnRoute
+			}
+		}
+	}
+}
+
+export function getNameByPath(path: string) {
+	return getName(path);
 }

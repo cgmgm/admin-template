@@ -1,18 +1,13 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Session } from '/@/utils/storage';
-import qs from 'qs';
+import { Session } from '@/utils/storage';
+import router from '@/router'
 
 // 配置新建一个 axios 实例
-const service: AxiosInstance = axios.create({
-	baseURL: import.meta.env.VITE_API_URL,
+const service = axios.create({
+	baseURL: import.meta.env.VITE_API_URL as any,
 	timeout: 50000,
 	headers: { 'Content-Type': 'application/json' },
-	paramsSerializer: {
-		serialize(params) {
-			return qs.stringify(params, { allowDots: true });
-		},
-	},
 });
 
 // 添加请求拦截器
@@ -35,18 +30,23 @@ service.interceptors.response.use(
 	(response) => {
 		// 对响应数据做点什么
 		const res = response.data;
-		if (res.code && res.code !== 0) {
+		if (res.code === 0 || (res.code && res.code !== 20000)) {
 			// `token` 过期或者账号已在别处登录
-			if (res.code === 401 || res.code === 4001) {
+			if (res.code === 50014) {
 				Session.clear(); // 清除浏览器全部临时缓存
 				window.location.href = '/'; // 去登录页
 				ElMessageBox.alert('你已被登出，请重新登录', '提示', {})
-					.then(() => {})
-					.catch(() => {});
+					.then(() => { })
+					.catch(() => { });
+			} else if (res.code == 20001 && (res.msg || res.message)) {
+				ElMessage.error((res.msg || res.message))
 			}
-			return Promise.reject(service.interceptors.response);
+			return Promise.reject(new Error(res.code || res.msg || res.message));
+			// return Promise.reject(service.interceptors.response);
+		} else if (res.code === undefined) {
+			return Promise.reject(response.data);
 		} else {
-			return res;
+			return response.data;
 		}
 	},
 	(error) => {

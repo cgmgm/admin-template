@@ -297,7 +297,8 @@
 
 		<!-- 演示3：函数方式 -->
 		<el-card shadow="hover" header="演示3：函数方式（点击按钮查看有无权限，用于判断）" class="mt15">
-			<el-row class="mb10" style="color: #808080">auth('xxx')、auths(['xxx','xxx'])、authAll(['xxx','xxx'])：</el-row>
+			<el-row class="mb10"
+				style="color: #808080">auth('xxx')、auths(['xxx','xxx'])、authAll(['xxx','xxx'])：</el-row>
 			<div class="flex-warp">
 				<div class="flex-warp-item">
 					<div class="flex-warp-item-box">
@@ -337,13 +338,13 @@
 <script setup lang="ts" name="limitsFrontEndBtn">
 import { defineAsyncComponent } from 'vue';
 import { ElMessage } from 'element-plus';
-import { auth, auths, authAll } from '/@/utils/authFunction';
+import { auth, auths, authAll } from '@/utils/authFunction';
 
 // 引入组件
-const LimitsFrontEndPage = defineAsyncComponent(() => import('/@/views/limits/frontEnd/page/index.vue'));
-const Auth = defineAsyncComponent(() => import('/@/components/auth/auth.vue'));
-const Auths = defineAsyncComponent(() => import('/@/components/auth/auths.vue'));
-const AuthAll = defineAsyncComponent(() => import('/@/components/auth/authAll.vue'));
+const LimitsFrontEndPage = defineAsyncComponent(() => import('@/views/limits/frontEnd/page/index.vue'));
+const Auth = defineAsyncComponent(() => import('@/components/auth/auth.vue'));
+const Auths = defineAsyncComponent(() => import('@/components/auth/auths.vue'));
+const AuthAll = defineAsyncComponent(() => import('@/components/auth/authAll.vue'));
 
 // 单个权限验证
 const onAuthClick = () => {
@@ -368,8 +369,10 @@ const onAuthAllClick = () => {
 	flex-wrap: wrap;
 	align-content: flex-start;
 	margin: 0 -5px;
+
 	.flex-warp-item {
 		padding: 5px;
+
 		.flex-warp-item-box {
 			width: 100%;
 			height: 100%;

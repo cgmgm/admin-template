@@ -21,6 +21,7 @@
 		"echarts-wordcloud": "^2.1.0",
 		"element-plus": "^2.3.3",
 		"js-cookie": "^3.0.1",
+		"js-md5": "^0.8.3",
 		"js-table2excel": "^1.0.3",
 		"jsplumb": "^2.15.6",
 		"mitt": "^3.0.0",

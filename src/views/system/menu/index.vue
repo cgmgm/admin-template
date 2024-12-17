@@ -16,13 +16,8 @@
 					新增菜单
 				</el-button>
 			</div>
-			<el-table
-				:data="state.tableData.data"
-				v-loading="state.tableData.loading"
-				style="width: 100%"
-				row-key="path"
-				:tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-			>
+			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%"
+				row-key="path" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
 				<el-table-column label="菜单名称" show-overflow-tooltip>
 					<template #default="scope">
 						<SvgIcon :name="scope.row.meta.icon" />
@@ -53,7 +48,8 @@
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
 						<el-button size="small" text type="primary" @click="onOpenAddMenu('add')">新增</el-button>
-						<el-button size="small" text type="primary" @click="onOpenEditMenu('edit', scope.row)">修改</el-button>
+						<el-button size="small" text type="primary"
+							@click="onOpenEditMenu('edit', scope.row)">修改</el-button>
 						<el-button size="small" text type="primary" @click="onTabelRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -68,11 +64,11 @@ import { defineAsyncComponent, ref, onMounted, reactive } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { useRoutesList } from '/@/stores/routesList';
-// import { setBackEndControlRefreshRoutes } from "/@/router/backEnd";
+import { useRoutesList } from '@/stores/routesList';
+// import { setBackEndControlRefreshRoutes } from "@/router/backEnd";
 
 // 引入组件
-const MenuDialog = defineAsyncComponent(() => import('/@/views/system/menu/dialog.vue'));
+const MenuDialog = defineAsyncComponent(() => import('@/views/system/menu/dialog.vue'));
 
 // 定义变量内容
 const stores = useRoutesList();
@@ -113,7 +109,7 @@ const onTabelRowDel = (row: RouteRecordRaw) => {
 			getTableData();
 			//await setBackEndControlRefreshRoutes() // 刷新菜单，未进行后端接口测试
 		})
-		.catch(() => {});
+		.catch(() => { });
 };
 // 页面加载时
 onMounted(() => {
