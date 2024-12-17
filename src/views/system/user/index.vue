@@ -24,8 +24,7 @@
 						<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:user:add'">
 							新增
 						</el-button>
-						<el-button type="danger" plain :disabled="false" @click="handleBack.handleDelete"
-							v-auth="'sys:user:del'">
+						<el-button type="danger" plain :disabled="false" @click="handleDelete" v-auth="'sys:user:del'">
 							删除
 						</el-button>
 					</template>
@@ -37,7 +36,7 @@
 
 <script setup lang="tsx" name="componentName">
 import { defineAsyncComponent, reactive, ref, computed, watch } from 'vue';
-import { createTableConfig, createColumn, createSearchItem, createCurrency, createActionColumn } from '@/components/table/template';
+import { createTableConfig, createColumn, createSearchItem, createActionColumn } from '@/components/table/template';
 import type { TableData } from '@/components/table/types';
 import { getUserList, delUser } from '@/api'
 import { useCat } from '@/mixins/useStore'
@@ -65,24 +64,30 @@ const handleBack = {
 		(window as any).$dialog('重置密码', rePwd, { id: e.userId });
 	},
 	handleDelete: (e?: any) => {
-
-		const userId = e.userId || selectList.value;
-		ElMessageBox({
-			message: '是否确认删除用户编号为"' + userId + '"的数据项?',
-			title: '警告',
-			showCancelButton: true,
-			confirmButtonText: '确定',
-			cancelButtonText: '取消',
-		}).then(function () {
-			return delUser({ id: userId }).then(() => {
-				getTableData(queryParams);
-				ElMessage.success('删除成功');
-			});
+		delUser({ id: e.userId }).then(() => {
+			getTableData(queryParams);
+			ElMessage.success('删除成功');
 		});
 	},
 	showgacode: (e: any) => {
 		(window as any).$dialog('谷歌二维码', watchQrcord, { data: e });
 	},
+}
+
+const handleDelete = () => {
+	const userId = selectList.value;
+	ElMessageBox({
+		message: '是否确认删除用户编号为"' + userId + '"的数据项?',
+		title: '警告',
+		showCancelButton: true,
+		confirmButtonText: '确定',
+		cancelButtonText: '取消',
+	}).then(function () {
+		return delUser({ id: userId }).then(() => {
+			getTableData(queryParams);
+			ElMessage.success('删除成功');
+		});
+	});
 }
 const actionBack = (item: any, row: any) => {
 	handleBack[item.key as string] && handleBack[item.key as string](row);
@@ -138,7 +143,6 @@ const state = reactive<{ tableData: TableData }>({
 		],
 		search: [
 			// 在此定义搜索项
-			// 例如：createCurrency(1, true),
 			createSearchItem('用户名', 'username', 'input', {
 				placeholder: '用户名模糊查询'
 			}),

@@ -32,39 +32,58 @@ const indexContent = `<template>
 
 <script setup lang="ts" name="componentName">
 import { defineAsyncComponent, reactive, ref } from 'vue';
-import { createTableConfig, createColumn, createSearchItem, createCurrency } from '@/components/table/template';
+import { createTableConfig, createColumn, createSearchItem, createActionColumn } from '@/components/table/template';
 import type { TableData } from '@/components/table/types';
+import { getUserList as getList,del as del } from '@/api'
+import AddInfo from './addInfo.vue';
 
 // 引入组件
 const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
-const AddInfo = defineAsyncComponent(() => import('./addInfo.vue'));
+// 添加或者编辑弹窗
 
+const addInfo = (id?: number) => {
+	(window as any).$dialog(id ? '编辑' : '添加', AddInfo, { id })
+		.$on('success', (e: any) => {
+			getTableData(queryParams);
+		})
+};
+const handleBack = {
+	edit: (e: any) => {
+		addInfo(e.userId);
+	},
+	delete: (e?: any) => {
+		del({ id: e.id }).then(() => {
+			getTableData(queryParams);
+			ElMessage.success('删除成功');
+		});
+	}
+}
+// 操作返回的处理
+const actionBack = (item: any, row: any) => handleBack[item.key as string] && handleBack[item.key as string](row);
 const state = reactive<{ tableData: TableData }>({
 	tableData: createTableConfig({
 		columns: [
 			// 在此定义表格列
 			// 例如：createColumn('标题', 'key', { type: 'text' }),
+            // 添加操作
+            // createActionColumn([
+			// 	{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:user:edit', icon: 'Edit' },
+			//  { key: 'delete', text: '删除', onClick: actionBack, poptext: '是否确认删除？', auth: 'sys:user:del', icon: 'Delete' },
+			// ]),
 		],
 		search: [
 			// 在此定义搜索项
-			// 例如：createCurrency(1, true),
+			// 例如：createSearchItem('用户名', 'username', 'input', { placeholder: '用户名模糊查询'})
 		]
 	}),
 });
-const addInfo = () => {
-	window.$dialog('添加', AddInfo)
-		.$on('success', (formData) => {
-			getTableData();
-		})
-};
-
 // 获取表格数据
-const getTableData = () => {
+const getTableData = async (e?: any) => {
 	state.tableData.config.loading = true;
 	// 在此处添加获取数据的逻辑
-
-	state.tableData.data = []; // 设置实际数据
-	state.tableData.config.total = 0; // 设置数据总数
+	const row = await getList(e);
+	state.tableData.data = row.data.list; // 设置实际数据
+	state.tableData.config.total = row.data.total; // 设置数据总数
 	state.tableData.config.loading = false;
 };
 
@@ -103,14 +122,22 @@ const addInfoContent = `<template>
 import { reactive, ref, inject } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
+// import { addUser as handleApi } from '@/api'
 
 // 定义变量内容
 const formRef = ref<FormInstance>();
 const dialogInstance = inject('dialogInstance');
+const props = defineProps({
+    // id: {
+    //     type: Number,
+    //     default: undefined,
+    // }
+});
 const state = reactive({
     form: {
         name: '',
     },
+    loading: false,
     rules: {
         name: [{ required: true, message: '请输入采样点名称', trigger: 'blur' }],
     } as FormRules,
@@ -120,14 +147,20 @@ const state = reactive({
 // 表单提交
 const onSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    await formEl.validate((valid: boolean) => {
+    await formEl.validate(async (valid: boolean) => {
         if (valid) {
-            console.log('submit!', state.form);
-            ElMessage.success('提交成功！');
-            // 可以发射任意自定义事件
-            (dialogInstance as any)?.$emit('success', state.form);
-            // 发射完成后关闭
-            cancel();
+            state.loading = true;
+            try {
+                // await handleApi({ ...state.form });
+                ElMessage.success('提交成功！');
+                // 可以发射任意自定义事件
+                (dialogInstance as any)?.$emit('success', state.form);
+                cancel();
+            catch (error) {
+                ElMessage.error('提交失败！');
+                state.loading = false;
+                return;
+            }
         }
     });
 };
