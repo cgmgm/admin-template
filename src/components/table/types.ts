@@ -6,8 +6,8 @@ export interface TableColumn {
     label: string;
     colWidth?: string | number;
     width?: string | number;
-    type?: 'text' | 'image' | 'input' | 'switch' | 'radio' | 'select';
-    formatter?: (row: any) => VNode | string | number;
+    type?: 'text' | 'image' | 'input' | 'switch' | 'radio' | 'date' | 'select';
+    formatter?: (row: any) => VNode | string | number | VNode[];
     height?: number;
     activeValue?: boolean | string | number;
     inactiveValue?: boolean | string | number;

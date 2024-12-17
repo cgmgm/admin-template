@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { defineConfig, loadEnv, ConfigEnv } from 'vite';
 import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
 import viteCompression from 'vite-plugin-compression';
-import { buildConfig } from './src/utils/build';
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 const pathResolve = (dir: string) => {
 	return resolve(__dirname, '.', dir);
@@ -20,7 +20,8 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 		plugins: [
 			vue(),
 			vueSetupExtend(),
-			viteCompression()
+			viteCompression(),
+			vueJsx()
 		],
 		root: process.cwd(),
 		resolve: { alias },

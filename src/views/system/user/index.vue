@@ -1,151 +1,201 @@
 <template>
-	<div class="system-user-container layout-padding">
-		<el-card shadow="hover" class="layout-padding-auto">
-			<div class="system-user-search mb15">
-				<el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddUser('add')">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增用户
-				</el-button>
-			</div>
-			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
-				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="用户状态" show-overflow-tooltip>
-					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
-						<el-tag type="info" v-else>禁用</el-tag>
+	<div class="container layout-pd">
+		<el-row :gutter="20" class="w100 h100" style="flex:1;">
+			<!--部门数据-->
+			<el-col :span="4" :xs="24">
+				<div style="height: 100%;background: var(--el-fill-color-blank);padding:5px;">
+					<div class="head-container">
+						<el-input v-model="deptName" placeholder="请输入部门名称" clearable :prefix-icon="Search"
+							style="margin-bottom: 20px" />
+					</div>
+					<div class="head-container">
+						<el-tree :data="treeData" :props="{ children: 'children', label: 'deptName' }" node-key="deptId"
+							:expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all
+							@node-click="handleNodeClick" />
+					</div>
+				</div>
+			</el-col>
+
+			<el-col :span="20" :xs="24">
+				<Table ref="tableRef" v-bind="state.tableData" class="table-demo" @fetch="getTableData"
+					@selectionChange="selectionChange" @valueChange="valueChange">
+					<template #orBut>
+						<!-- 自定义按钮插槽 -->
+						<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:user:add'">
+							新增
+						</el-button>
+						<el-button type="danger" plain :disabled="false" @click="handleBack.handleDelete"
+							v-auth="'sys:user:del'">
+							删除
+						</el-button>
 					</template>
-				</el-table-column>
-				<el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" width="100">
-					<template #default="scope">
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary"
-							@click="onOpenEditUser('edit', scope.row)">修改</el-button>
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary"
-							@click="onRowDel(scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination @size-change="onHandleSizeChange" @current-change="onHandleCurrentChange" class="mt15"
-				:pager-count="5" :page-sizes="[10, 20, 30]" v-model:current-page="state.tableData.param.pageNum"
-				background v-model:page-size="state.tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper" :total="state.tableData.total">
-			</el-pagination>
-		</el-card>
-		<UserDialog ref="userDialogRef" @refresh="getTableData()" />
+				</Table>
+			</el-col>
+		</el-row>
 	</div>
 </template>
 
-<script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+<script setup lang="tsx" name="componentName">
+import { defineAsyncComponent, reactive, ref, computed, watch } from 'vue';
+import { createTableConfig, createColumn, createSearchItem, createCurrency, createActionColumn } from '@/components/table/template';
+import type { TableData } from '@/components/table/types';
+import { getUserList, delUser } from '@/api'
+import { useCat } from '@/mixins/useStore'
+import { ElImage, ElMessageBox, ElMessage, ElTag } from 'element-plus';
+import { letterAvatar } from '@/utils/index';
+import { handleTree } from '@/utils';
+import { Search } from '@element-plus/icons-vue';
+import AddInfo from './addInfo.vue';
+import rePwd from './re-pwd.vue';
+import watchQrcord from './watch-qrcode.vue';
 
 // 引入组件
-const UserDialog = defineAsyncComponent(() => import('@/views/system/user/dialog.vue'));
+const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
+const { depts } = useCat();
 
-// 定义变量内容
-const userDialogRef = ref();
-const state = reactive<SysUserState>({
-	tableData: {
-		data: [],
-		total: 0,
-		loading: false,
-		param: {
-			pageNum: 1,
-			pageSize: 10,
-		},
+const handleBack = {
+	add: () => {
+		addInfo();
 	},
-});
+	edit: (e: any) => {
+		addInfo(e.userId);
 
-// 初始化表格数据
-const getTableData = () => {
-	state.tableData.loading = true;
-	const data = [];
-	for (let i = 0; i < 2; i++) {
-		data.push({
-			userName: i === 0 ? 'admin' : 'test',
-			userNickname: i === 0 ? '我是管理员' : '我是普通用户',
-			roleSign: i === 0 ? 'admin' : 'common',
-			department: i === 0 ? ['风华雪月', 'IT外包服务'] : ['风华雪月', '资本控股'],
-			phone: '12345678910',
-			email: '风华雪月@123.com',
-			sex: '女',
-			password: '123456',
-			overdueTime: new Date(),
-			status: true,
-			describe: i === 0 ? '不可删除' : '测试用户',
-			createTime: new Date().toLocaleString(),
+	},
+	rePwd: (e: any) => {
+		(window as any).$dialog('重置密码', rePwd, { id: e.userId });
+	},
+	handleDelete: (e?: any) => {
+
+		const userId = e.userId || selectList.value;
+		ElMessageBox({
+			message: '是否确认删除用户编号为"' + userId + '"的数据项?',
+			title: '警告',
+			showCancelButton: true,
+			confirmButtonText: '确定',
+			cancelButtonText: '取消',
+		}).then(function () {
+			return delUser({ id: userId }).then(() => {
+				getTableData(queryParams);
+				ElMessage.success('删除成功');
+			});
 		});
+	},
+	showgacode: (e: any) => {
+		(window as any).$dialog('谷歌二维码', watchQrcord, { data: e });
+	},
+}
+const actionBack = (item: any, row: any) => {
+	handleBack[item.key as string] && handleBack[item.key as string](row);
+}
+// 转为树状结构
+const treeData = computed(() => handleTree(depts.value, 'deptId', 'parentId', 'children'))
+
+// 过滤筛选
+const tree = ref();
+const deptName = ref('');
+watch(
+	() => deptName.value,
+	(newValue) => {
+		tree.value.filter(newValue);
 	}
-	state.tableData.data = data;
-	state.tableData.total = state.tableData.data.length;
-	setTimeout(() => {
-		state.tableData.loading = false;
-	}, 500);
-};
-// 打开新增用户弹窗
-const onOpenAddUser = (type: string) => {
-	userDialogRef.value.openDialog(type);
-};
-// 打开修改用户弹窗
-const onOpenEditUser = (type: string, row: RowUserType) => {
-	userDialogRef.value.openDialog(type, row);
-};
-// 删除用户
-const onRowDel = (row: RowUserType) => {
-	ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	})
-		.then(() => {
-			getTableData();
-			ElMessage.success('删除成功');
-		})
-		.catch(() => { });
-};
-// 分页改变
-const onHandleSizeChange = (val: number) => {
-	state.tableData.param.pageSize = val;
-	getTableData();
-};
-// 分页改变
-const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val;
-	getTableData();
-};
-// 页面加载时
-onMounted(() => {
-	getTableData();
+);
+const selectList = ref();
+const selectionChange = (val: any) => {
+	selectList.value = val.map((item: any) => item.userId);
+}
+const state = reactive<{ tableData: TableData }>({
+	tableData: createTableConfig({
+		columns: [
+			createColumn('用户编号', 'userId', { width: 100 }),
+			createColumn('用户名', 'account', { width: 150 }),
+			createColumn('用户头像', 'face_pic', {
+				width: 100,
+				formatter: row => {
+					return <ElImage
+						style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+						src={row.face_pic || letterAvatar(row.account)}
+					/>
+				}
+			}),
+			createColumn('用户昵称', 'nickname', { width: 150 }),
+			createColumn('门店', 'shop_name'),
+			createColumn('归属部门', 'dept_name'),
+			createColumn('角色', 'role_ids_text', {
+				formatter: row => {
+					return <ElTag>{row.role_ids_text} </ElTag>
+				}
+			}),
+			createColumn('状态', 'is_deleted', { type: 'switch', activeValue: 0, inactiveValue: 1, activeText: '正常', inactiveText: '禁止' }),
+			createColumn('谷歌验证码开关', 'is_enabled_ga', { type: 'switch', activeText: '开', inactiveText: '关' }),
+			createColumn('创建时间', 'create_time', { type: 'date' }),
+			createActionColumn([
+				{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:user:edit', icon: 'Edit' },
+				{ key: 'rePwd', text: '重置密码', onClick: actionBack, auth: 'sys:user:resetpwd', icon: 'Edit' },
+				{ key: 'handleDelete', text: '删除', onClick: actionBack, poptext: '是否确认删除？', auth: 'sys:user:del', icon: 'Delete' },
+				{ key: 'showgacode', text: '查看二维码', onClick: actionBack, auth: 'sys:user:showgacode', icon: 'Edit' }
+			]),
+
+		],
+		search: [
+			// 在此定义搜索项
+			// 例如：createCurrency(1, true),
+			createSearchItem('用户名', 'username', 'input', {
+				placeholder: '用户名模糊查询'
+			}),
+			createSearchItem('用户昵称', 'nickname', 'input', {
+				placeholder: '请输入用户昵称'
+			}),
+			createSearchItem('状态', 'status', 'select', {
+				placeholder: '用户状态',
+				optionKey: 'sys_normal_disable'
+			}),
+		],
+		config: {
+			isSelection: true
+		}
+	}),
 });
+const valueChange = (row: any, prop: string, value: any, type: string) => {
+	console.log(row, prop, value, type)
+}
+let queryParams = {} as any;
+// 节点单击事件
+const handleNodeClick = (data: any) => {
+	queryParams.deptId = data.deptId;
+	getTableData(queryParams);
+	queryParams.deptId = 0;
+};
+const addInfo = (id?: number) => {
+	(window as any).$dialog(id ? '编辑' : '添加', AddInfo, { id })
+		.$on('success', (e: any) => {
+			getTableData(queryParams);
+		})
+};
+// 获取表格数据
+const getTableData = async (e: any) => {
+	queryParams = e;
+	state.tableData.config.loading = true;
+	// 在此处添加获取数据的逻辑
+	const row = await getUserList(e);
+	state.tableData.data = row.data.list; // 设置实际数据
+	state.tableData.config.total = row.data.total; // 设置数据总数
+	state.tableData.config.loading = false;
+};
+
+// 筛选节点
+const filterNode = (value: string, data: any) => {
+	if (!value) return true;
+	return data.deptName.indexOf(value) !== -1;
+};
+
 </script>
 
 <style scoped lang="scss">
-.system-user-container {
-	:deep(.el-card__body) {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		overflow: auto;
-
-		.el-table {
-			flex: 1;
-		}
-	}
+.container {
+	height: 100%;
+	overflow: hidden;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 }
 </style>

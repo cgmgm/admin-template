@@ -65,7 +65,7 @@ import { initBackEndControlRoutes, getNameByPath } from '@/router/backEnd';
 import { Session } from '@/utils/storage';
 import { formatAxis } from '@/utils/formatTime';
 import { NextLoading } from '@/utils/loading';
-import { postData } from '@/api';
+import { login } from '@/api';
 import { letterAvatar } from '@/utils/index';
 import { md5 } from "js-md5";
 
@@ -106,7 +106,7 @@ const onSignIn = async () => {
 	loginFormRef.value.validate((valid: any) => {
 		if (valid) {
 			state.loading.signIn = true;
-			postData("/syslogin/index", {
+			login({
 				username: state.ruleForm.userName,
 				password: md5(state.ruleForm.password),
 				google_captcha: state.ruleForm.google_captcha

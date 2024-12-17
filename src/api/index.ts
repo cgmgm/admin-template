@@ -1,161 +1,66 @@
 import request from '@/utils/request';
-import { log } from 'console';
 
-export function postData(url: string, params: object) {
+export function post(url: string, params?: any) {
 	return request({
 		url: url,
 		method: 'post',
-		data: params,
+		data: params || {},
 	});
 }
 
-
-export function getData(url: string, params: object) {
+export function get(url: string, params?: any) {
 	return request({
 		url: url,
-		method: 'get',
-		params,
+		params: params || {},
 	});
 }
+// 登陆
+export const login = (data?: any) => post('syslogin/index', data);
 
-/**
- * 获取上传Token
- * @param {String} parent_id
- * @param {String} type
- * @returns
- */
-export function getUploadToken(parent_id:any, type = 'web') {
-	return request({
-		url: '/sys/storage/token',
-		method: 'post',
-		data: {
-			parent_id,
-			type
-		}
-	})
-}
+// 获取游戏类型
+export const getAllGame = (data?: any) => post('shop/game/list', data);
 
-// 查询数据列表
-export function listData(url: string, data?: object) {
-	return request({
-		url: url + '/list',
-		method: 'post',
-		data
-	})
-}
+// 获取所有台桌
+export const getAllDesk = (data?: any) => post('shop/desk/list', data);
 
+// 获取所有角色
+export const getAllrole = (data?: any) => post('auth/role/all', data);
 
+// 获取所有商户角色
+export const getAllMerchantRole = (data?: any) => post('merchant/role/all', data);
 
-// 查询数据列表
-export function listAllData(url: string, data: object) {
-	return request({
-		url: url + '/all',
-		method: 'post',
-		data
-	})
-}
+// 获取所有商户
+export const getAllMerchant = (data?: any) => post('merchant/onemerchant/all', data);
 
-// 查询数据详细
-export function getOneData(url: string, id: string) {
-	return request({
-		url: url + '/get',
-		method: 'post',
-		data: {
-			id
-		}
-	})
-}
+// 获取所有部门
+export const getAllDept = (data?: any) => post('sys/dept/list', data);
 
-// 新增数据
-export function addData(url: string, data: object) {
-	return postData(url + "/add", data)
-}
+/* 获取状态信息
+ * @param data 参数{dictType} sys_normal_disable 部门状态
+	sys_role_type 角色状态
+	sys_show_hide 显示隐藏
+	sys_menu_type 菜单状态
+	sys_merchant_role_type 代理状态
+	sys_yes_no 是否
+	sys_common_status 成功失败
+	sys_oper_type 开关
+ * */
+export const getStatus = (data?: any) => get('sys/dictData/list', data);
 
 
-// 修改数据
-export function updateData(url: string, data: object) {
-	return postData(url + "/update", data)
-}
+// 获取所有用户
+export const getUserList = (data?: any) => post('sys/user/list', data);
+// 获取用户信息
+export const getUserInfo = (data?: any) => post('sys/user/get', data);
+// 删除用户
+export const addUser = (data?: any) => post('sys/user/add', data);
+// 删除用户
+export const delUser = (data?: any) => post('sys/user/del', data);
+
+// 重置密码
+export const resetpwd = (data?: any) => post('sys/user/resetpwd', data);
+// 重置密码
+export const getGoogleCode = (data?: any) => post('getGoogleCode', data);
 
 
-// 删除数据
-export function delData(url: string, id: any) {
-	return request({
-		url: url + "/del",
-		method: 'post',
-		data: {
-			id
-		}
-	})
-}
 
-// 删除数据
-export function clearData(url: string) {
-	return request({
-		url: url + "/clear",
-		method: 'post'
-	})
-}
-
-// 删除数据
-export function copyData(url: string, id: any) {
-	return request({
-		url: url + "/copy",
-		method: 'post',
-		data: {
-			id
-		}
-	})
-}
-
-// 导出字典类型
-export function exportData(url: string,query: any) {
-    return request({
-        url: url+'/export',
-        method: 'get',
-        params: query
-    })
-}
-
-
-// 根据字典类型查询字典数据信息
-export function getDicts(dictType: string) {
-	return getData('/sys/dictData/list',{dictType:dictType})
-}
-
-
-// 更新状态
-export function changeStatus(url: string, data: object) {
-	return request({
-		url: url + '/status',
-		method: 'post',
-		data
-	})
-}
-
-// 修改排序
-export function updateSort(url: string, data: object) {
-	return request({
-		url: url + '/sort',
-		method: 'post',
-		data
-	})
-}
-
-// 门店 - 游戏管理 - 修改赔率
-export function updateClickOdds(url: string, data: object) {
-	return request({
-		url: url + '/updateClickOdds',
-		method: 'post',
-		data
-	})
-}
-
-// 查询数据详细
-export function getOneDataArr(url: string, data: object) {
-	return request({
-		url: url + '/get',
-		method: 'post',
-		data
-	})
-}

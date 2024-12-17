@@ -14,7 +14,12 @@
 				<el-table-column v-for="col in visibleColumns" :key="col.prop" v-bind="col" show-overflow-tooltip>
 					<template #default="scope">
 						<template v-if="col.formatter">
-							<component :is="col.formatter(scope.row)" />
+							<div style="display: flex;flex-wrap: wrap;">
+								<component v-if="Array.isArray(col.formatter(scope.row))"
+									v-for="item in col.formatter(scope.row)" :is="item" />
+								<component v-else :is="col.formatter(scope.row)" />
+							</div>
+
 						</template>
 						<template v-else-if="col.type === 'image'">
 							<el-image :style="{ width: `${col.width || 50}px`, height: `${col.height || 50}px` }"
@@ -26,9 +31,9 @@
 								@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'input')" />
 						</template>
 						<template v-else-if="col.type === 'switch'">
-							<el-switch :model-value="scope.row[col.prop] === true || scope.row[col.prop] === 'true'"
+							<el-switch v-model="scope.row[col.prop]" inline-prompt
 								@update:model-value="(val) => handleValueChange(scope.row, col.prop, val, 'switch')"
-								:active-value="col.activeValue ?? true" :inactive-value="col.inactiveValue ?? false"
+								:active-value="col.activeValue ?? 1" :inactive-value="col.inactiveValue ?? 0"
 								:active-text="col.activeText" :inactive-text="col.inactiveText" />
 						</template>
 						<template v-else-if="col.type === 'radio'">
@@ -46,8 +51,13 @@
 									:value="opt.value" />
 							</el-select>
 						</template>
+						<template v-else-if="col.type === 'date'">
+							<div style="text-wrap: auto; word-break: auto-phrase;">{{ formatDate(new
+								Date(scope.row[col.prop]
+									* 1000), 'YYYY-mm-dd HH:MM:SS') }}</div>
+						</template>
 						<template v-else>
-							{{ scope.row[col.prop] }}
+							<div style="text-wrap: auto; word-break: auto-phrase;">{{ scope.row[col.prop] }}</div>
 						</template>
 					</template>
 				</el-table-column>
@@ -101,6 +111,7 @@ import { useThemeConfig } from '@/stores/themeConfig';
 import '@/theme/tableTool.scss';
 import { useRoute } from 'vue-router';
 import { auths } from '@/utils/authFunction';
+import { formatDate } from '@/utils/formatTime';
 
 // 搜索
 const TableSearch = defineAsyncComponent(() => import('./search.vue'));
@@ -111,7 +122,7 @@ interface TableColumn {
 	label: string;
 	minWidth?: number | string;
 	width?: number | string;
-	type?: 'image' | 'input' | 'switch' | 'radio' | 'select' | 'text';
+	type?: 'image' | 'input' | 'switch' | 'radio' | 'select' | 'date' | 'text';
 	formatter?: (row: any) => VNode | string;
 	height?: number;
 	activeValue?: boolean | string | number;
@@ -125,7 +136,6 @@ interface TableColumn {
 	}>;
 	[key: string]: any;
 }
-
 // props 定义
 const props = defineProps({
 	data: {
@@ -171,6 +181,7 @@ const props = defineProps({
 
 // 修改 emit 定义，添加 fetch 事件
 const emit = defineEmits([
+	'selectionChange',
 	'pageChange',
 	'sortHeader',
 	'update:modelValue',
@@ -346,7 +357,11 @@ onMounted(() => {
 	document.addEventListener('click', closePanel);
 	// 如果自动加载，则触发数据获取
 	if (props.autoLoad) {
-		emit('fetch');
+		emit('fetch', {
+			...state.searchParams,
+			pageNum: state.page.pageNum,
+			pageSize: state.page.pageSize
+		});
 	}
 });
 
@@ -437,6 +452,7 @@ const onCheckChange = (val: boolean, col: TableColumn) => {
 // 表格多选改变时，用于导出
 const onSelectionChange = (val: EmptyObjectType[]) => {
 	state.selectlist = val;
+	emit('selectionChange', state.selectlist)
 };
 // 分页改变
 const onHandleSizeChange = (val: number) => {
@@ -622,7 +638,10 @@ defineExpose({
 .table-demo-padding {
 	display: flex;
 	flex-direction: column;
-	gap: 15px; // 添加间距
+	gap: 5px; // 添加间距
+	padding: 10px;
+
+
 
 
 	.table-container {
@@ -630,6 +649,32 @@ defineExpose({
 		flex-direction: column;
 		flex: 1;
 		overflow: hidden;
+
+		:deep(.el-button+.el-button) {
+			margin-left: 0;
+		}
+
+		:deep(.el-divider--horizontal) {
+			margin: 2px;
+		}
+
+		:deep(.el-checkbox.el-checkbox--large) {
+			height: 25px;
+		}
+
+		:deep(.el-table--large .el-table__cell) {
+			padding: 4px 0;
+
+		}
+
+		:deep(.el-table th.el-table__cell.is-leaf) {
+			padding: 8px 0;
+		}
+
+
+		:deep(.el-button--large) {
+			padding: 5px 7px;
+		}
 
 		.el-table {
 			flex: 1;
@@ -689,23 +734,6 @@ defineExpose({
 
 		}
 	}
-}
-
-:deep(.el-divider--horizontal) {
-	margin: 2px;
-}
-
-:deep(.el-checkbox.el-checkbox--large) {
-	height: 25px;
-}
-
-:deep(.el-table--large .el-table__cell) {
-	padding: 4px 0;
-
-}
-
-:deep(.el-table th.el-table__cell.is-leaf) {
-	padding: 8px 0;
 }
 
 .context-menu-content {

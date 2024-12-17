@@ -8,7 +8,8 @@ import { judementSameArr } from '@/utils/arrayOperation';
  */
 export function auth(value: string): boolean {
 	const stores = useUserInfo();
-	return stores.userInfos.authBtnList.some((v: string) => v === value);
+	const allPermission = '*'
+	return stores.userInfos.authBtnList.some((v: string) => allPermission == v || v === value);
 }
 
 /**
@@ -16,15 +17,13 @@ export function auth(value: string): boolean {
  * @param value 权限值
  * @returns 有权限，返回 `true`，反之则反
  */
-export function auths(value: Array<string>): boolean {
-	let flag = false;
+export function auths(value: Array<string> | string): boolean {
+	if (typeof value === 'string') return auth(value);
 	const stores = useUserInfo();
-	stores.userInfos.authBtnList.map((val: string) => {
-		value.map((v: string) => {
-			if (val === v) flag = true;
-		});
+	const allPermission = '*'
+	return stores.userInfos.authBtnList.some((val: string) => {
+		return allPermission == val || value.includes(val)
 	});
-	return flag;
 }
 
 /**

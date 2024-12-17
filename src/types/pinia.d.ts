@@ -39,6 +39,9 @@ declare interface RoutesListState<T = any> {
 	isColumnsNavHover: Boolean;
 }
 
+interface DictData {
+	[key: string]: any;
+}
 // 布局配置
 declare interface ThemeConfigState {
 	themeConfig: {
@@ -89,4 +92,5 @@ declare interface ThemeConfigState {
 		globalI18n: string;
 		globalComponentSize: string;
 	};
+	allStatus?: any;
 }

@@ -2,7 +2,7 @@
 	<div class="table-search-container" v-if="props.search.length > 0">
 		<el-form ref="tableSearchRef" :model="state.form" size="default" label-width="100px" class="table-form">
 			<el-row ref="searchRowRef" class="search-row">
-				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20" v-for="(val, key) in search" :key="key"
+				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb5" v-for="(val, key) in search" :key="key"
 					v-show="key < state.visibleCount || state.isToggle">
 					<template v-if="val.type !== ''">
 						<el-form-item :label="val.label" :prop="val.prop"
@@ -18,26 +18,25 @@
 								:clearable="false" :editable="false" :popper-options="{
 									modifiers: [{ name: 'computeStyles', options: { adaptive: false, enabled: false } }]
 								}" />
-							<el-select v-model="state.form[val.prop]" :placeholder="val.placeholder"
+							<el-select v-model="state.form[val.prop]" :placeholder="val.placeholder" clearable
 								v-else-if="val.type === 'select'" style="width: 100%" :filterable="val.filterable">
-								<el-option v-for="item in val.options" :key="item.value" :label="item.label"
-									:value="item.value"> </el-option>
+								<el-option v-for="item in (dictList[val.optionKey] || val.options)" :key="item.value"
+									:label="item.label" :value="item.value"> </el-option>
 							</el-select>
 						</el-form-item>
 					</template>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb20">
-					<el-form-item class="table-form-btn" :label-width="search.length <= 1 ? '10px' : '100px'">
+				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb5">
+					<el-form-item class="table-form-btn" :label-width="search.length <= 1 ? '10px' : '5px'">
 						<template #label v-if="search.length > state.visibleCount">
 							<div class="table-form-btn-toggle ml10" @click="state.isToggle = !state.isToggle">
 								<span>{{ state.isToggle ? '收起筛选' : '展开筛选' }}</span>
 								<SvgIcon :name="state.isToggle ? 'ele-ArrowUp' : 'ele-ArrowDown'" />
 							</div>
 						</template>
-						<div>
+						<div style="display: flex;gap:5px;flex-wrap: wrap;">
 							<el-button size="default" type="primary" @click="onSearch(tableSearchRef)">查询</el-button>
-							<el-button size="default" type="info" class="ml10"
-								@click="onReset(tableSearchRef)">重置</el-button>
+							<el-button size="default" type="info" @click="onReset(tableSearchRef)">重置</el-button>
 							<slot name="orBut"></slot>
 						</div>
 					</el-form-item>
@@ -48,9 +47,36 @@
 </template>
 
 <script setup lang="ts" name="makeTableDemoSearch">
-import { reactive, ref, onMounted, nextTick, onUnmounted } from 'vue';
+import { reactive, ref, onMounted, computed, onUnmounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import dayjs from 'dayjs';
+import { useCat } from '@/mixins/useStore'
+
+const { dictData, depts, game, desk, initDict } = useCat();
+
+/**
+ * 将对象转换为包含 value 和 label 的数组
+ * @param obj 要转换的对象
+ * @returns 转换后的数组
+ */
+function toArr(obj: Record<string, string>): Array<{ value: string, label: string }> {
+	return Object.entries(obj).map(([value, label]) => ({
+		value,
+		label
+	}));
+}
+const dictList = computed(() => {
+	return {
+		sys_normal_disable: toArr(dictData.value.sys_normal_disable || {}),
+		sys_role_type: toArr(dictData.value.sys_role_type || {}),
+		sys_show_hide: toArr(dictData.value.sys_show_hide || {}),
+		sys_menu_type: toArr(dictData.value.sys_menu_type || {}),
+		sys_merchant_role_type: toArr(dictData.value.sys_merchant_role_type || {}),
+		sys_yes_no: toArr(dictData.value.sys_yes_no || {}),
+		sys_oper_type: toArr(dictData.value.sys_oper_type || {}),
+		sys_common_status: toArr(dictData.value.sys_common_status || {}),
+	}
+})
 
 // 定义父组件传过来的值
 const props = defineProps({
@@ -224,6 +250,14 @@ onUnmounted(() => {
 <style scoped lang="scss">
 .table-search-container {
 	display: flex;
+
+	:deep(.el-button+.el-button) {
+		margin: 0;
+	}
+
+	:deep(.el-form-item:last-of-type) {
+		margin-bottom: 0px !important;
+	}
 
 	.table-form {
 		flex: 1;
