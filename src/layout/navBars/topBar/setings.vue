@@ -77,54 +77,57 @@
 							@change="onMenuBarGradualChange"></el-switch>
 					</div>
 				</div>
-
-				<!-- 分栏设置 -->
-				<el-divider content-position="left"
-					:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">{{
-						$t('message.layout.twoColumnsTitle')
-					}}</el-divider>
-				<div class="layout-breadcrumb-seting-bar-flex"
-					:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
-					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.twoColumnsMenuBar') }}
+				<template v-if="getThemeConfig.layout === 'columns'">
+					<!-- 分栏设置 -->
+					<el-divider content-position="left"
+						:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">{{
+							$t('message.layout.twoColumnsTitle')
+						}}</el-divider>
+					<div class="layout-breadcrumb-seting-bar-flex"
+						:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
+						<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.twoColumnsMenuBar')
+							}}
+						</div>
+						<div class="layout-breadcrumb-seting-bar-flex-value">
+							<el-color-picker v-model="getThemeConfig.columnsMenuBar" size="default"
+								@change="onBgColorPickerChange('columnsMenuBar')"
+								:disabled="getThemeConfig.layout !== 'columns'">
+							</el-color-picker>
+						</div>
 					</div>
-					<div class="layout-breadcrumb-seting-bar-flex-value">
-						<el-color-picker v-model="getThemeConfig.columnsMenuBar" size="default"
-							@change="onBgColorPickerChange('columnsMenuBar')"
-							:disabled="getThemeConfig.layout !== 'columns'">
-						</el-color-picker>
+					<div class="layout-breadcrumb-seting-bar-flex"
+						:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
+						<div class="layout-breadcrumb-seting-bar-flex-label">{{
+							$t('message.layout.twoColumnsMenuBarColor')
+							}}</div>
+						<div class="layout-breadcrumb-seting-bar-flex-value">
+							<el-color-picker v-model="getThemeConfig.columnsMenuBarColor" size="default"
+								@change="onBgColorPickerChange('columnsMenuBarColor')"
+								:disabled="getThemeConfig.layout !== 'columns'">
+							</el-color-picker>
+						</div>
 					</div>
-				</div>
-				<div class="layout-breadcrumb-seting-bar-flex"
-					:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
-					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.twoColumnsMenuBarColor')
-						}}</div>
-					<div class="layout-breadcrumb-seting-bar-flex-value">
-						<el-color-picker v-model="getThemeConfig.columnsMenuBarColor" size="default"
-							@change="onBgColorPickerChange('columnsMenuBarColor')"
-							:disabled="getThemeConfig.layout !== 'columns'">
-						</el-color-picker>
+					<div class="layout-breadcrumb-seting-bar-flex mt14"
+						:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
+						<div class="layout-breadcrumb-seting-bar-flex-label">{{
+							$t('message.layout.twoIsColumnsMenuBarColorGradual') }}</div>
+						<div class="layout-breadcrumb-seting-bar-flex-value">
+							<el-switch v-model="getThemeConfig.isColumnsMenuBarColorGradual" size="small"
+								@change="onColumnsMenuBarGradualChange"
+								:disabled="getThemeConfig.layout !== 'columns'"></el-switch>
+						</div>
 					</div>
-				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt14"
-					:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
-					<div class="layout-breadcrumb-seting-bar-flex-label">{{
-						$t('message.layout.twoIsColumnsMenuBarColorGradual') }}</div>
-					<div class="layout-breadcrumb-seting-bar-flex-value">
-						<el-switch v-model="getThemeConfig.isColumnsMenuBarColorGradual" size="small"
-							@change="onColumnsMenuBarGradualChange"
-							:disabled="getThemeConfig.layout !== 'columns'"></el-switch>
+					<div class="layout-breadcrumb-seting-bar-flex mt14"
+						:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
+						<div class="layout-breadcrumb-seting-bar-flex-label">{{
+							$t('message.layout.twoIsColumnsMenuHoverPreload') }}</div>
+						<div class="layout-breadcrumb-seting-bar-flex-value">
+							<el-switch v-model="getThemeConfig.isColumnsMenuHoverPreload" size="small"
+								@change="onColumnsMenuHoverPreloadChange"
+								:disabled="getThemeConfig.layout !== 'columns'"></el-switch>
+						</div>
 					</div>
-				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt14"
-					:style="{ opacity: getThemeConfig.layout !== 'columns' ? 0.5 : 1 }">
-					<div class="layout-breadcrumb-seting-bar-flex-label">{{
-						$t('message.layout.twoIsColumnsMenuHoverPreload') }}</div>
-					<div class="layout-breadcrumb-seting-bar-flex-value">
-						<el-switch v-model="getThemeConfig.isColumnsMenuHoverPreload" size="small"
-							@change="onColumnsMenuHoverPreloadChange"
-							:disabled="getThemeConfig.layout !== 'columns'"></el-switch>
-					</div>
-				</div>
+				</template>
 
 				<!-- 界面设置 -->
 				<el-divider content-position="left">{{ $t('message.layout.threeTitle') }}</el-divider>
@@ -187,14 +190,14 @@
 
 				<!-- 界面显示 -->
 				<el-divider content-position="left">{{ $t('message.layout.fourTitle') }}</el-divider>
-				<div class="layout-breadcrumb-seting-bar-flex mt15">
+				<!-- <div class="layout-breadcrumb-seting-bar-flex mt15">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsShowLogo') }}</div>
 					<div class="layout-breadcrumb-seting-bar-flex-value">
 						<el-switch v-model="getThemeConfig.isShowLogo" size="small"
 							@change="onIsShowLogoChange"></el-switch>
 					</div>
-				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt15"
+				</div> -->
+				<!-- <div class="layout-breadcrumb-seting-bar-flex mt15"
 					:style="{ opacity: getThemeConfig.layout === 'classic' || getThemeConfig.layout === 'transverse' ? 0.5 : 1 }">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsBreadcrumb') }}
 					</div>
@@ -211,7 +214,7 @@
 						<el-switch v-model="getThemeConfig.isBreadcrumbIcon" size="small"
 							@change="setLocalThemeConfig"></el-switch>
 					</div>
-				</div>
+				</div> -->
 				<div class="layout-breadcrumb-seting-bar-flex mt15">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsTagsview') }}</div>
 					<div class="layout-breadcrumb-seting-bar-flex-value">
@@ -251,13 +254,13 @@
 							@change="onShareTagsViewChange"></el-switch>
 					</div>
 				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt15">
+				<!-- <div class="layout-breadcrumb-seting-bar-flex mt15">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsFooter') }}</div>
 					<div class="layout-breadcrumb-seting-bar-flex-value">
 						<el-switch v-model="getThemeConfig.isFooter" size="small"
 							@change="setLocalThemeConfig"></el-switch>
 					</div>
-				</div>
+				</div> -->
 				<div class="layout-breadcrumb-seting-bar-flex mt15">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsGrayscale') }}
 					</div>
@@ -281,14 +284,14 @@
 							@change="onWartermarkChange"></el-switch>
 					</div>
 				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt14">
+				<!-- <div class="layout-breadcrumb-seting-bar-flex mt14">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourWartermarkText') }}
 					</div>
 					<div class="layout-breadcrumb-seting-bar-flex-value">
 						<el-input v-model="getThemeConfig.wartermarkText" size="default" style="width: 90px"
 							@input="onWartermarkTextInput"></el-input>
 					</div>
-				</div>
+				</div> -->
 
 				<!-- 其它设置 -->
 				<el-divider content-position="left">{{ $t('message.layout.fiveTitle') }}</el-divider>

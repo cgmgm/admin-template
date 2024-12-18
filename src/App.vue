@@ -54,6 +54,34 @@ const getGlobalComponentSize = computed(() => {
 const getGlobalI18n = computed(() => {
 	return messages.value[locale.value];
 });
+
+
+const handleGlobalClick = (event: MouseEvent) => {
+	const target = event.target as HTMLElement;
+	const tableDemoPadding = document.querySelector('.table-demo-padding') as HTMLElement;
+
+	// 检查点击的元素或其祖先元素是否包含指定的类名
+	const isInspectorButton = hasInspectorButtonClass(target);
+
+	if (isInspectorButton) {
+		tableDemoPadding.style.pointerEvents = 'none';
+		// 在这里添加你想要的处理逻辑
+	} else {
+		tableDemoPadding.style.pointerEvents = '';
+		// 处理其他情况
+	}
+};
+
+// 辅助函数：检查元素或其祖先是否包含指定的类名
+const hasInspectorButtonClass = (element: HTMLElement | null): boolean => {
+	while (element) {
+		if (element.classList && element.classList.contains('vue-devtools__inspector-button')) {
+			return true;
+		}
+		element = element.parentElement;
+	}
+	return false;
+};
 // 设置初始化，防止刷新时恢复默认
 onBeforeMount(() => {
 	// 设置批量第三方 icon 图标
@@ -78,10 +106,13 @@ onMounted(() => {
 			stores.setCurrenFullscreen(Session.get('isTagsViewCurrenFull'));
 		}
 	});
+
+	if (import.meta.env.MODE == 'development') document.addEventListener('click', handleGlobalClick);
 });
 // 页面销毁时，关闭监听布局配置/i18n监听
 onUnmounted(() => {
 	mittBus.off('openSetingsDrawer', () => { });
+	document.removeEventListener('click', handleGlobalClick);
 });
 // 监听路由的变化，设置网站标题
 watch(

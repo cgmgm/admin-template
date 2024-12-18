@@ -17,8 +17,8 @@
 			</el-col>
 
 			<el-col :span="20" :xs="24">
-				<Table ref="tableRef" v-bind="state.tableData" class="table-demo" @fetch="getTableData"
-					@selectionChange="selectionChange" @valueChange="valueChange">
+				<Table ref="tableRef" v-bind="state.tableData" @fetch="getTableData" @selectionChange="selectionChange"
+					@valueChange="valueChange">
 					<template #orBut>
 						<!-- 自定义按钮插槽 -->
 						<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:user:add'">
