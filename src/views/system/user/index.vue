@@ -33,8 +33,7 @@
 		</el-row>
 	</div>
 </template>
-
-<script setup lang="tsx" name="componentName">
+<script setup lang="tsx" name="systemuser">
 import { defineAsyncComponent, reactive, ref, computed, watch } from 'vue';
 import { createTableConfig, createColumn, createSearchItem, createActionColumn } from '@/components/table/template';
 import type { TableData } from '@/components/table/types';

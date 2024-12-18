@@ -4,6 +4,7 @@ import { defineConfig, loadEnv, ConfigEnv } from 'vite';
 import vueSetupExtend from 'vite-plugin-vue-setup-extend-plus';
 import viteCompression from 'vite-plugin-compression';
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import VueDevTools from 'vite-plugin-vue-devtools'
 
 const pathResolve = (dir: string) => {
 	return resolve(__dirname, '.', dir);
@@ -19,6 +20,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 	return {
 		plugins: [
 			vue(),
+			VueDevTools(),
 			vueSetupExtend(),
 			viteCompression(),
 			vueJsx()
