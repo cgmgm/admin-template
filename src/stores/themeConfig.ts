@@ -53,7 +53,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启分栏菜单背景颜色渐变
 			isColumnsMenuBarColorGradual: false,
 			// 是否开启分栏菜单鼠标悬停预加载(预览菜单)
-			isColumnsMenuHoverPreload: false,
+			isColumnsMenuHoverPreload: true,
 
 			/**
 			 * 界面设置
