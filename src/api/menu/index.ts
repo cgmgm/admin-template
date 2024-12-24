@@ -13,8 +13,8 @@ export function useMenuApi() {
 	return {
 		getMenu: (params?: object) => {
 			return request({
-				url: '/auth/getMenuAdmin',
-				method: 'get',
+				url: '/getMenus',
+				method: 'post',
 				params,
 			});
 		},

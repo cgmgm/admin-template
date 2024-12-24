@@ -48,6 +48,10 @@ export interface TableConfig {
     isBorder: boolean;
     isSerialNo: boolean;
     isSelection: boolean;
+    treeProps?: {
+        children: string;
+        hasChildren: string;
+    };
 }
 
 // 分页参数接口

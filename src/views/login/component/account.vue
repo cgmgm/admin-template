@@ -1,17 +1,15 @@
 <template>
 	<el-form size="large" class="login-content-form" :rules="loginRules" :model="state.ruleForm" ref="loginFormRef">
 		<el-form-item class="login-animation1">
-			<el-input text :placeholder="$t('message.account.accountPlaceholder1')" v-model="state.ruleForm.userName"
-				clearable autocomplete="off">
+			<el-input text placeholder="请输入用户名" v-model="state.ruleForm.userName" clearable autocomplete="off">
 				<template #prefix>
 					<el-icon class="el-input__icon"><ele-User /></el-icon>
 				</template>
 			</el-input>
 		</el-form-item>
 		<el-form-item class="login-animation2">
-			<el-input :type="state.isShowPassword ? 'text' : 'password'"
-				:placeholder="$t('message.account.accountPlaceholder2')" v-model="state.ruleForm.password"
-				autocomplete="off">
+			<el-input :type="state.isShowPassword ? 'text' : 'password'" placeholder="请输入密码"
+				v-model="state.ruleForm.password" autocomplete="off" @keyup.enter="onSignIn">
 				<template #prefix>
 					<el-icon class="el-input__icon"><ele-Unlock /></el-icon>
 				</template>
@@ -103,25 +101,25 @@ const currentTime = computed(() => {
 const loginFormRef = ref<any>(null);
 // 登录
 const onSignIn = async () => {
-	loginFormRef.value.validate((valid: any) => {
+	loginFormRef.value.validate(async (valid: any) => {
 		if (valid) {
 			state.loading.signIn = true;
-			login({
-				username: state.ruleForm.userName,
-				password: md5(state.ruleForm.password),
-				google_captcha: state.ruleForm.google_captcha
-			}).then(async (res: any) => {
+			try {
+				const res = await login({
+					username: state.ruleForm.userName,
+					password: state.ruleForm.password,
+					google_captcha: state.ruleForm.google_captcha
+				});
 				// 用户信息数据
 				const userInfos = {
 					userId: res.data.id,
-					userName: state.ruleForm.userName,
+					userName: res.data.username,
 					nickname: res.data.nickname,
-					avatar: res.data.face_pic || letterAvatar(res.data.account),
+					avatar: res.data.avatar || letterAvatar(res.data.username),
 					time: new Date().getTime(),
 					roles: res.data.roles,
 					authBtnList: res.data.auths,
 				};
-
 				// 存储 token 到浏览器缓存
 				Session.set('token', res.data.token);
 				// 存储用户信息到浏览器缓存
@@ -139,29 +137,12 @@ const onSignIn = async () => {
 				}
 				// 执行完 initBackEndControlRoutes，再执行 signInSuccess
 				signInSuccess();
-			}).catch((error: any) => {
-				// Google验证码验证
-				if (error == 'Error: 900001') {
-					ElMessageBox.prompt('请输入Google验证码', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						inputPattern: /^\d{6}$/,
-						inputErrorMessage: '验证码格式不正确',
-					}).then(({ value }) => {
-						state.ruleForm.google_captcha = value;
-						onSignIn();
-					}).catch(() => {
-						ElMessage({
-							type: 'info',
-							message: '取消输入',
-						})
-						state.loading.signIn = false;
-					})
-				} else {
-					state.loading.signIn = false;
-				}
-				state.ruleForm.google_captcha = '';
-			})
+			} catch (error: any) {
+				console.log(error, 'debugm')
+				// ElMessage.error(error.message);
+			} finally {
+				state.loading.signIn = false;
+			}
 		}
 	})
 };

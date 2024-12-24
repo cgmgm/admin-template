@@ -9,7 +9,8 @@ import { judementSameArr } from '@/utils/arrayOperation';
 export function auth(value: string): boolean {
 	const stores = useUserInfo();
 	const allPermission = '*'
-	return stores.userInfos.authBtnList.some((v: string) => allPermission == v || v === value);
+	// return stores.userInfos.authBtnList.some((v: string) => allPermission == v || v === value);
+	return true;
 }
 
 /**
@@ -21,9 +22,10 @@ export function auths(value: Array<string> | string): boolean {
 	if (typeof value === 'string') return auth(value);
 	const stores = useUserInfo();
 	const allPermission = '*'
-	return stores.userInfos.authBtnList.some((val: string) => {
-		return allPermission == val || value.includes(val)
-	});
+	// return stores.userInfos.authBtnList.some((val: string) => {
+	// 	return allPermission == val || value.includes(val)
+	// });
+	return true;
 }
 
 /**
@@ -33,5 +35,6 @@ export function auths(value: Array<string> | string): boolean {
  */
 export function authAll(value: Array<string>): boolean {
 	const stores = useUserInfo();
-	return judementSameArr(value, stores.userInfos.authBtnList);
+	// return judementSameArr(value, stores.userInfos.authBtnList);
+	return true;
 }

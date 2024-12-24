@@ -14,8 +14,17 @@ export function get(url: string, params?: any) {
 		params: params || {},
 	});
 }
+
+export function Delete(url: string, params?: any) {
+	return request({
+		url: url,
+		method: 'delete',
+		params: params || {},
+	});
+}
+
 // 登陆
-export const login = (data?: any) => post('syslogin/index', data);
+export const login = (data?: any) => post('auth/login', data);
 
 // 获取游戏类型
 export const getAllGame = (data?: any) => post('shop/game/list', data);

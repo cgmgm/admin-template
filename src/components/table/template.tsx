@@ -81,7 +81,7 @@ const icons = { Delete, Edit, Search, Share, Upload };
  */
 export const createActionColumn = (bntList: Object[], options: Partial<TableColumn> = {}) => {
     bntList = bntList.filter((col: any) => (col.auth ? auths(col.auth) : true));
-    const width = bntList.length * 65;
+    const width = bntList.length * 85;
     return createColumn('操作', 'action', {
         ...options,
         fixed: 'right',

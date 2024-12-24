@@ -38,7 +38,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 					target: env.VITE_API_PROXY,
 					ws: true,
 					changeOrigin: true,
-					rewrite: path => path.replace(/^\/api/, ''),
+					// rewrite: path => path.replace(/^\/api/, ''),
 				},
 			},
 		},

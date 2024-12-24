@@ -37,33 +37,32 @@
 import { defineAsyncComponent, reactive, ref, computed, watch } from 'vue';
 import { createTableConfig, createColumn, createSearchItem, createActionColumn } from '@/components/table/template';
 import type { TableData } from '@/components/table/types';
-import { getUserList, delUser } from '@/api'
 import { useCat } from '@/mixins/useStore'
 import { ElImage, ElMessageBox, ElMessage, ElTag } from 'element-plus';
 import { letterAvatar } from '@/utils/index';
 import { handleTree } from '@/utils';
 import { Search } from '@element-plus/icons-vue';
-import AddInfo from './addInfo.vue';
+import dialog from './dialog.vue';
 import rePwd from './re-pwd.vue';
 import watchQrcord from './watch-qrcode.vue';
-
+import { getUsers as getList, delUser as del } from '@/api/system';
 // 引入组件
 const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
 const { depts } = useCat();
 
 const handleBack = {
 	add: () => {
-		addInfo();
+		openDialog();
 	},
 	edit: (e: any) => {
-		addInfo(e.userId);
+		openDialog(e.userId);
 
 	},
 	rePwd: (e: any) => {
 		(window as any).$dialog('重置密码', rePwd, { id: e.userId });
 	},
 	handleDelete: (e?: any) => {
-		delUser({ id: e.userId }).then(() => {
+		del({ id: e.userId }).then(() => {
 			getTableData(queryParams);
 			ElMessage.success('删除成功');
 		});
@@ -82,7 +81,7 @@ const handleDelete = () => {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 	}).then(function () {
-		return delUser({ id: userId }).then(() => {
+		return del({ id: userId }).then(() => {
 			getTableData(queryParams);
 			ElMessage.success('删除成功');
 		});
@@ -110,28 +109,28 @@ const selectionChange = (val: any) => {
 const state = reactive<{ tableData: TableData }>({
 	tableData: createTableConfig({
 		columns: [
-			createColumn('用户编号', 'userId', { width: 100 }),
-			createColumn('用户名', 'account', { width: 150 }),
-			createColumn('用户头像', 'face_pic', {
+			createColumn('用户编号', 'id', { width: 100 }),
+			createColumn('用户名', 'username', { width: 150 }),
+			createColumn('用户头像', 'avatar', {
 				width: 100,
 				formatter: row => {
 					return <ElImage
 						style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-						src={row.face_pic || letterAvatar(row.account)}
+						src={row.avatar || letterAvatar(row.username)}
 					/>
 				}
 			}),
-			createColumn('用户昵称', 'nickname', { width: 150 }),
-			createColumn('门店', 'shop_name'),
-			createColumn('归属部门', 'dept_name'),
-			createColumn('角色', 'role_ids_text', {
+			createColumn('用户昵称', 'real_name', { width: 150 }),
+			// createColumn('门店', 'shop_name'),
+			createColumn('归属部门', 'dept_name', { formatter: row => <span>{row.department?.name || '-'}</span> }),
+			createColumn('角色', 'roles', {
 				formatter: row => {
-					return <ElTag>{row.role_ids_text} </ElTag>
+					return <span>{row.roles.map((item: any) => item.name).join(',')}</span>
 				}
 			}),
 			createColumn('状态', 'is_deleted', { type: 'switch', activeValue: 0, inactiveValue: 1, activeText: '正常', inactiveText: '禁止' }),
 			createColumn('谷歌验证码开关', 'is_enabled_ga', { type: 'switch', activeText: '开', inactiveText: '关' }),
-			createColumn('创建时间', 'create_time', { type: 'date' }),
+			createColumn('创建时间', 'created_at'),
 			createActionColumn([
 				{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:user:edit', icon: 'Edit' },
 				{ key: 'rePwd', text: '重置密码', onClick: actionBack, auth: 'sys:user:resetpwd', icon: 'Edit' },
@@ -168,8 +167,8 @@ const handleNodeClick = (data: any) => {
 	getTableData(queryParams);
 	queryParams.deptId = 0;
 };
-const addInfo = (id?: number) => {
-	(window as any).$dialog(id ? '编辑' : '添加', AddInfo, { id })
+const openDialog = (id?: number) => {
+	(window as any).$dialog(id ? '编辑' : '添加', dialog, { id })
 		.$on('success', (e: any) => {
 			getTableData(queryParams);
 		})
@@ -179,7 +178,7 @@ const getTableData = async (e: any) => {
 	queryParams = e;
 	state.tableData.config.loading = true;
 	// 在此处添加获取数据的逻辑
-	const row = await getUserList(e);
+	const row = await getList(e);
 	state.tableData.data = row.data.list; // 设置实际数据
 	state.tableData.config.total = row.data.total; // 设置数据总数
 	state.tableData.config.loading = false;

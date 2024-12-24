@@ -59,7 +59,7 @@ const getGlobalI18n = computed(() => {
 const handleGlobalClick = (event: MouseEvent) => {
 	const target = event.target as HTMLElement;
 	const tableDemoPadding = document.querySelector('.table-demo-padding') as HTMLElement;
-
+	if (!tableDemoPadding) return;
 	// 检查点击的元素或其祖先元素是否包含指定的类名
 	const isInspectorButton = hasInspectorButtonClass(target);
 

@@ -1,8 +1,8 @@
 <!-- dialogWrap组件 -->
 <template>
     <el-dialog class="dialog-wrap" :class="classObj" ref="dialogRef" :title="title" :modal="true" append-to-body
-        v-model="dialogVisible" :close-on-press-escape="true" :destroy-on-close="false" :close-on-click-modal="true"
-        :width="isMobile ? '100%' : 'auto'" @closed="handleClosed" @close="handleClose">
+        draggable v-model="dialogVisible" :close-on-press-escape="true" :destroy-on-close="false"
+        :close-on-click-modal="true" :width="isMobile ? '100%' : 'auto'" @closed="handleClosed" @close="handleClose">
         <template #title>
             {{ title }}
             <span v-if="dialogOptions.subtitle" class="subtitle">{{ dialogOptions.subtitle }}</span>
@@ -147,8 +147,10 @@ defineExpose({
 }
 
 .dialog-wrap {
-    :deep(.el-dialog) {
-        margin: 0 auto;
+    margin: 0 auto;
+    top: 15vh;
+
+    :deep(&.el-dialog) {
 
         @media screen and (max-width: 768px) {
             width: 90% !important;
@@ -159,6 +161,19 @@ defineExpose({
 </style>
 
 <style lang="scss">
+.dialog-wrap {
+    margin: 0 auto;
+    top: 15vh;
+
+    &.el-dialog {
+
+        @media screen and (max-width: 768px) {
+            width: 90% !important;
+            margin: 20vh auto 0;
+        }
+    }
+}
+
 .mobile-dialog {
     .el-dialog {
         margin: 0 auto;

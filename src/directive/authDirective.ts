@@ -13,9 +13,10 @@ export function authDirective(app: App) {
 		mounted(el, binding) {
 			const stores = useUserInfo();
 			const allPermission = '*'
-			const hasPerm = stores.userInfos.authBtnList.some((v: string) => {
-				return v === binding.value || allPermission == v || binding.value == allPermission
-			})
+			// const hasPerm = stores.userInfos.authBtnList.some((v: string) => {
+			// 	return v === binding.value || allPermission == v || binding.value == allPermission
+			// })
+			const hasPerm = true;
 
 			if (!hasPerm) {
 				el.parentNode && el.parentNode.removeChild(el);
@@ -28,9 +29,10 @@ export function authDirective(app: App) {
 			// let flag = false;
 			const allPermission = '*'
 			const stores = useUserInfo();
-			const hasPerm = stores.userInfos.authBtnList.some((val: string) => {
-				return allPermission == val || binding.value.includes(val)
-			});
+			// const hasPerm = stores.userInfos.authBtnList.some((val: string) => {
+			// 	return allPermission == val || binding.value.includes(val)
+			// });
+			const hasPerm = true;
 			//
 			// stores.userInfos.authBtnList.map((val: string) => {
 			// 	binding.value.map((v: string) => {
@@ -51,14 +53,14 @@ export function authDirective(app: App) {
 			let flag = [];
 			const allPermission = '*'
 			const stores = useUserInfo();
-			stores.userInfos.authBtnList.map((val: string) => {
-				binding.value.map((v: string) => {
-					if (val === v || allPermission == val) flag.push(true);
-				});
-			});
-			if (flag.length > 0 && flag.length == binding.value.length) {
-				el.parentNode && el.parentNode.removeChild(el);
-			}
+			// stores.userInfos.authBtnList.map((val: string) => {
+			// 	binding.value.map((v: string) => {
+			// 		if (val === v || allPermission == val) flag.push(true);
+			// 	});
+			// });
+			// if (flag.length > 0 && flag.length == binding.value.length) {
+			// 	el.parentNode && el.parentNode.removeChild(el);
+			// }
 		},
 	});
 }

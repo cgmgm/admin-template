@@ -199,7 +199,7 @@ onUnmounted(() => {
 }
 
 .layout-lock-screen-mask {
-	background: var(--el-color-white);
+	background: #000;
 	@extend .layout-lock-screen-fixed;
 	z-index: 9999990;
 }

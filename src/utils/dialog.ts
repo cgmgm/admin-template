@@ -1,6 +1,9 @@
 import { createVNode, render, type Component, type VNode, createApp } from 'vue'
 import dialogWrap from '@/components/dialogWrap/index.vue'
 import { i18n } from '@/i18n/index'
+import IconSelector from '@/components/iconSelector/index.vue'
+import { useConfig } from '@/mixins/useStore'
+import { createPinia } from 'pinia'
 
 interface DialogOptions {
     modal?: boolean
@@ -69,7 +72,6 @@ export function $dialog(
                 content: component,
                 contentProps: props,
                 onEmit: ({ event, args }) => {
-                    // 统一处理所有事件
                     dialogInstance.$emit(event, ...args);
                 },
                 onClose: () => {
@@ -79,23 +81,20 @@ export function $dialog(
         }
     })
 
-    // 创建内容组件
-    const contentVNode = createVNode(component, {
-        ...props,
-        onClose: () => {
-            // 处理内容组件的关闭事件
-            subApp.unmount()
-            document.body.removeChild(container)
-            currentDialog.vm = null
-        }
-    })
+    // 创建新的 pinia 实例
+    const pinia = createPinia()
+    subApp.use(pinia)
 
     // 继承全局配置
     subApp.config.globalProperties = {
         ...appInstance.config.globalProperties,
         $t: i18n.global.t.bind(i18n.global),
-        $i18n: i18n.global
+        $i18n: i18n.global,
+        useConfig: useConfig
     }
+
+    // 注册必要的组件
+    subApp.component('IconSelector', IconSelector)
 
     // 使用全局组件和指令
     Object.keys(appInstance._context.components).forEach(name => {
@@ -112,7 +111,14 @@ export function $dialog(
     // 挂载应用
     subApp.mount(container)
 
-    currentDialog.vm = contentVNode
+    currentDialog.vm = createVNode(component, {
+        ...props,
+        onClose: () => {
+            subApp.unmount()
+            document.body.removeChild(container)
+            currentDialog.vm = null
+        }
+    })
 
     return dialogInstance
 }
@@ -121,6 +127,5 @@ export function $dialog(
 export function setupDialog(app: any) {
     appInstance = app
     app.config.globalProperties.$dialog = $dialog
-    // 添加到window对象
     window.$dialog = $dialog
 } 

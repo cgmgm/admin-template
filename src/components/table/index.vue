@@ -10,57 +10,67 @@
 				style="width: 100%" v-loading="tableConfig.loading" @selection-change="onSelectionChange"
 				@header-contextmenu="handleHeaderContextMenu">
 				<el-table-column type="selection" :reserve-selection="true" width="44" v-if="tableConfig.isSelection" />
-				<el-table-column type="index" label="序号" width="60" v-if="tableConfig.isSerialNo" />
-				<el-table-column v-for="col in visibleColumns" :key="col.prop" v-bind="col" show-overflow-tooltip>
-					<template #default="scope">
-						<template v-if="col.formatter">
-							<div style="display: flex;flex-wrap: wrap;">
-								<component v-if="Array.isArray(col.formatter(scope.row))"
-									v-for="item in col.formatter(scope.row)" :is="item" />
-								<component v-else :is="col.formatter(scope.row)" />
-							</div>
+				<el-table-column type="index" label="序号" width="80" v-if="tableConfig.isSerialNo" />
+				<template v-for="col in visibleColumns" :key="col.prop">
+					<el-table-column v-bind="{ ...col, type: undefined }">
+						<template #header>
+							<slot :name="col.prop + 'header'">
+								{{ col.label }}
+							</slot>
+						</template>
+						<template #default="scope">
+							<template v-if="col.formatter">
+								<div style="display: inline-block;">
+									<div style="display: flex;flex-wrap: wrap;">
+										<component v-if="Array.isArray(col.formatter(scope.row))"
+											v-for="item in col.formatter(scope.row)" :is="item" />
+										<component v-else :is="col.formatter(scope.row)" />
+									</div>
+								</div>
 
+							</template>
+							<template v-else-if="col.type === 'image'">
+								<el-image :style="{ width: `${col.width || 50}px`, height: `${col.height || 50}px` }"
+									:src="scope.row[col.prop]" :zoom-rate="1.2"
+									:preview-src-list="[scope.row[col.prop]]" preview-teleported fit="cover" />
+							</template>
+							<template v-else-if="col.type === 'input'">
+								<el-input v-model="scope.row[col.prop]" :placeholder="col.placeholder"
+									@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'input')" />
+							</template>
+							<template v-else-if="col.type === 'switch'">
+								<el-switch v-model="scope.row[col.prop]" inline-prompt
+									@update:model-value="(val) => handleValueChange(scope.row, col.prop, val, 'switch')"
+									:active-value="col.activeValue ?? 1" :inactive-value="col.inactiveValue ?? 0"
+									:active-text="col.activeText" :inactive-text="col.inactiveText" />
+							</template>
+							<template v-else-if="col.type === 'radio'">
+								<el-radio-group v-model="scope.row[col.prop]"
+									@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'radio')">
+									<el-radio v-for="opt in col.options" :key="opt.value" :label="opt.value">
+										{{ opt.label }}
+									</el-radio>
+								</el-radio-group>
+							</template>
+							<template v-else-if="col.type === 'select'">
+								<el-select v-model="scope.row[col.prop]" :placeholder="col.placeholder"
+									@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'select')">
+									<el-option v-for="opt in col.options" :key="opt.value" :label="opt.label"
+										:value="opt.value" />
+								</el-select>
+							</template>
+							<template v-else-if="col.type === 'date'">
+								<div style="text-wrap: auto; word-break: auto-phrase;">{{ formatDate(new
+									Date(scope.row[col.prop]
+										* 1000), 'YYYY-mm-dd HH:MM:SS') }}</div>
+							</template>
+							<template v-else>
+								<span style="text-wrap: auto; word-break: auto-phrase;display: inline-block;">{{
+									scope.row[col.prop] }}</span>
+							</template>
 						</template>
-						<template v-else-if="col.type === 'image'">
-							<el-image :style="{ width: `${col.width || 50}px`, height: `${col.height || 50}px` }"
-								:src="scope.row[col.prop]" :zoom-rate="1.2" :preview-src-list="[scope.row[col.prop]]"
-								preview-teleported fit="cover" />
-						</template>
-						<template v-else-if="col.type === 'input'">
-							<el-input v-model="scope.row[col.prop]" :placeholder="col.placeholder"
-								@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'input')" />
-						</template>
-						<template v-else-if="col.type === 'switch'">
-							<el-switch v-model="scope.row[col.prop]" inline-prompt
-								@update:model-value="(val) => handleValueChange(scope.row, col.prop, val, 'switch')"
-								:active-value="col.activeValue ?? 1" :inactive-value="col.inactiveValue ?? 0"
-								:active-text="col.activeText" :inactive-text="col.inactiveText" />
-						</template>
-						<template v-else-if="col.type === 'radio'">
-							<el-radio-group v-model="scope.row[col.prop]"
-								@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'radio')">
-								<el-radio v-for="opt in col.options" :key="opt.value" :label="opt.value">
-									{{ opt.label }}
-								</el-radio>
-							</el-radio-group>
-						</template>
-						<template v-else-if="col.type === 'select'">
-							<el-select v-model="scope.row[col.prop]" :placeholder="col.placeholder"
-								@change="(val: any) => handleValueChange(scope.row, col.prop, val, 'select')">
-								<el-option v-for="opt in col.options" :key="opt.value" :label="opt.label"
-									:value="opt.value" />
-							</el-select>
-						</template>
-						<template v-else-if="col.type === 'date'">
-							<div style="text-wrap: auto; word-break: auto-phrase;">{{ formatDate(new
-								Date(scope.row[col.prop]
-									* 1000), 'YYYY-mm-dd HH:MM:SS') }}</div>
-						</template>
-						<template v-else>
-							<div style="text-wrap: auto; word-break: auto-phrase;">{{ scope.row[col.prop] }}</div>
-						</template>
-					</template>
-				</el-table-column>
+					</el-table-column>
+				</template>
 			</el-table>
 			<div class="table-footer mt15">
 				<el-pagination v-model:current-page="state.page.pageNum" v-model:page-size="state.page.pageSize"
@@ -454,6 +464,9 @@ const onSelectionChange = (val: EmptyObjectType[]) => {
 	state.selectlist = val;
 	emit('selectionChange', state.selectlist)
 };
+const getSelect = () => {
+	return state.selectlist;
+}
 // 分页改变
 const onHandleSizeChange = (val: number) => {
 	state.page.pageSize = val;
@@ -511,15 +524,6 @@ const onImportTable = () => {
 const onRefreshTable = () => {
 	fetchData();
 };
-// 设置
-const onSetTable = () => {
-	settingsVisible.value = true;
-	// 等待 DOM 更新后初始化 Sortable
-	nextTick(() => {
-		initSortable();
-	});
-};
-
 // 修改 Sortable 初始化函数
 const initSortable = () => {
 	if (!toolSetRef.value) return;
@@ -631,6 +635,7 @@ const fetchData = () => {
 // 暴露变量
 defineExpose({
 	pageReset,
+	getSelect
 });
 </script>
 
@@ -766,7 +771,7 @@ defineExpose({
 	}
 
 	.tool-sortable {
-		max-height: 300px;
+		max-height: 600px;
 		overflow-y: auto;
 	}
 

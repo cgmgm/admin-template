@@ -35,13 +35,13 @@ export const useCats = defineStore('cats', {
 		},
 		// 获取全部配置
 		async getAllDict() {
-			const d = ['sys_normal_disable', 'sys_role_type', 'sys_show_hide', 'sys_menu_type', 'sys_merchant_role_type', 'sys_yes_no', 'sys_oper_type', 'sys_common_status'];
-			const promises = d.map(key => this.getDict(key));
-			await Promise.all(promises);
-			this.getAllGame();
-			this.getAllDept();
-			this.getAllDesk();
-			return this.dictData;
+			// const d = ['sys_normal_disable', 'sys_role_type', 'sys_show_hide', 'sys_menu_type', 'sys_merchant_role_type', 'sys_yes_no', 'sys_oper_type', 'sys_common_status'];
+			// const promises = d.map(key => this.getDict(key));
+			// await Promise.all(promises);
+			// this.getAllGame();
+			// this.getAllDept();
+			// this.getAllDesk();
+			// return this.dictData;
 		},
 		// 获取所有游戏
 		async getAllGame() {

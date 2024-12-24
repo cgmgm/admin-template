@@ -69,9 +69,9 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启经典布局分割菜单（仅经典布局生效）
 			isClassicSplitMenu: false,
 			// 是否开启自动锁屏
-			isLockScreen: false,
+			isLockScreen: true,
 			// 开启自动锁屏倒计时(s/秒)
-			lockScreenTime: 30,
+			lockScreenTime: 300,
 
 			/**
 			 * 界面显示
@@ -101,7 +101,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启色弱模式
 			isInvert: false,
 			// 是否开启水印
-			isWartermark: true,
+			isWartermark: false,
 			// 水印文案
 			wartermarkText: '风华雪月',
 
