@@ -86,7 +86,7 @@ export const createActionColumn = (bntList: Object[], options: Partial<TableColu
         ...options,
         fixed: 'right',
         width,
-        formatter: (row: any) => {
+        template: (row: any) => {
             return () => bntList.map((item: any) => {
                 const IconComponent = icons[item.icon]
                 const button = (

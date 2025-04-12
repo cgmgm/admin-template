@@ -19,12 +19,12 @@
 							</slot>
 						</template>
 						<template #default="scope">
-							<template v-if="col.formatter">
+							<template v-if="col.template">
 								<div style="display: inline-block;">
 									<div style="display: flex;flex-wrap: wrap;">
-										<component v-if="Array.isArray(col.formatter(scope.row))"
-											v-for="item in col.formatter(scope.row)" :is="item" />
-										<component v-else :is="col.formatter(scope.row)" />
+										<component v-if="Array.isArray(col.template(scope.row))"
+											v-for="item in col.template(scope.row)" :is="item" />
+										<component v-else :is="col.template(scope.row)" />
 									</div>
 								</div>
 
@@ -133,7 +133,7 @@ interface TableColumn {
 	minWidth?: number | string;
 	width?: number | string;
 	type?: 'image' | 'input' | 'switch' | 'radio' | 'select' | 'date' | 'text';
-	formatter?: (row: any) => VNode | string;
+	template?: (row: any) => VNode | string;
 	height?: number;
 	activeValue?: boolean | string | number;
 	inactiveValue?: boolean | string | number;

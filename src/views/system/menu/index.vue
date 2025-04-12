@@ -52,7 +52,7 @@ const state = reactive<{ tableData: TableData }>({
 		columns: [
 			createColumn('菜单名称', 'menuName', {
 				width: 180,
-				formatter(row) {
+				template(row) {
 					const key = 'message.router.' + row.name;
 					return <div>{i18n.global.te(key) ? i18n.global.t(key) : row.name}</div>
 				},

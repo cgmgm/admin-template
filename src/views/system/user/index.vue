@@ -38,13 +38,13 @@ import { defineAsyncComponent, reactive, ref, computed, watch } from 'vue';
 import { createTableConfig, createColumn, createSearchItem, createActionColumn } from '@/components/table/template';
 import type { TableData } from '@/components/table/types';
 import { useCat } from '@/mixins/useStore'
-import { ElImage, ElMessageBox, ElMessage, ElTag } from 'element-plus';
+import { ElMessage, ElMessageBox, ElImage, ElTag } from 'element-plus'
 import { letterAvatar } from '@/utils/index';
 import { handleTree } from '@/utils';
 import { Search } from '@element-plus/icons-vue';
-import dialog from './dialog.vue';
-import rePwd from './re-pwd.vue';
-import watchQrcord from './watch-qrcode.vue';
+import * as dialog from './dialog.vue';
+import * as rePwd from './re-pwd.vue';
+import * as watchQrcord from './watch-qrcode.vue';
 import { getUsers as getList, delUser as del } from '@/api/system';
 // 引入组件
 const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
@@ -56,7 +56,6 @@ const handleBack = {
 	},
 	edit: (e: any) => {
 		openDialog(e.userId);
-
 	},
 	rePwd: (e: any) => {
 		(window as any).$dialog('重置密码', rePwd, { id: e.userId });
@@ -88,7 +87,7 @@ const handleDelete = () => {
 	});
 }
 const actionBack = (item: any, row: any) => {
-	handleBack[item.key as string] && handleBack[item.key as string](row);
+	handleBack[item.key as keyof typeof handleBack]?.(row);
 }
 // 转为树状结构
 const treeData = computed(() => handleTree(depts.value, 'deptId', 'parentId', 'children'))
@@ -113,7 +112,7 @@ const state = reactive<{ tableData: TableData }>({
 			createColumn('用户名', 'username', { width: 150 }),
 			createColumn('用户头像', 'avatar', {
 				width: 100,
-				formatter: row => {
+				template: row => {
 					return <ElImage
 						style={{ width: '50px', height: '50px', borderRadius: '50%' }}
 						src={row.avatar || letterAvatar(row.username)}
@@ -121,10 +120,9 @@ const state = reactive<{ tableData: TableData }>({
 				}
 			}),
 			createColumn('用户昵称', 'real_name', { width: 150 }),
-			// createColumn('门店', 'shop_name'),
-			createColumn('归属部门', 'dept_name', { formatter: row => <span>{row.department?.name || '-'}</span> }),
+			createColumn('归属部门', 'dept_name', { template: row => <span>{row.department?.name || '-'}</span> }),
 			createColumn('角色', 'roles', {
-				formatter: row => {
+				template: row => {
 					return <span>{row.roles.map((item: any) => item.name).join(',')}</span>
 				}
 			}),
