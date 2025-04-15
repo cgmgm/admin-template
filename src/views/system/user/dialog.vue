@@ -3,15 +3,15 @@
         <el-form ref="formRef" :model="state.form" :rules="state.rules" label-width="80px">
             <el-row :gutter="35">
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="用户昵称" prop="nickname">
-                        <el-input v-model="state.form.nickname" placeholder="请输入用户昵称" />
+                    <el-form-item label="用户昵称" prop="real_name">
+                        <el-input v-model="state.form.real_name" placeholder="请输入用户昵称" />
                     </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="归属部门" prop="deptId">
-                        <el-cascader v-model="state.form.deptId" :options="treeData" :props="{
-                            label: 'deptName',
-                            value: 'deptId',
+                    <el-form-item label="归属部门" prop="dept_id">
+                        <el-cascader v-model="state.form.dept_id" :options="treeData" :props="{
+                            label: 'name',
+                            value: 'id',
                             checkStrictly: true,
                             emitPath: false,
                         }" class="w100" clearable filterable placeholder="请选择归属部门"
@@ -29,39 +29,12 @@
                     </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="角色" prop="roleIds">
-                        <el-select class="w100" v-model="state.form.roleIds" multiple :collapse-tags="true"
+                    <el-form-item label="角色" prop="role_ids">
+                        <el-select class="w100" v-model="state.form.role_ids" multiple :collapse-tags="true"
                             placeholder="请选择">
-                            <el-option v-for="item in state.roleOptions" :key="item.roleId" :label="item.roleName"
-                                :value="item.roleId" :disabled="item.status == 1"></el-option>
+                            <el-option v-for="item in state.roleOptions" :key="item.id" :label="item.name"
+                                :value="item.id" :disabled="item.status == 1"></el-option>
                         </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="商户角色" prop="merchantRoles">
-                        <el-select class="w100" v-model="state.form.merchantRoles" multiple :collapse-tags="true"
-                            placeholder="请选择">
-                            <el-option v-for="item in state.merchantRoleOptions" :key="item.roleId"
-                                :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="所属商户" prop="merchantIds">
-                        <el-select class="w100" v-model="state.form.merchantIds" multiple :collapse-tags="true"
-                            placeholder="请选择">
-                            <el-option v-for="item in state.merchantOptions" :key="item.id"
-                                :label="`${item.account}【${item.nickname}】`" :value="item.id"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                    <el-form-item label="IP白名单" prop="whitelist">
-                        <el-input v-model="state.form.whitelist" :rows="3" type="textarea"
-                            placeholder="多个IP用换行分割，不输入表示不限制"></el-input>
-                    </el-form-item>
-                    <el-form-item label="备注" prop="remark">
-                        <el-input v-model="state.form.remark" type="textarea" placeholder="请输入内容"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -83,7 +56,7 @@ import { ElMessage } from 'element-plus';
 import { handleTree } from '@/utils';
 import { md5 } from "js-md5";
 import { useCat } from '@/mixins/useStore';
-const { depts, getRole, getMerchanRole, getMerchan } = useCat();
+const { store } = useCat();
 // 定义变量内容
 const formRef = ref<FormInstance>();
 const dialogInstance = inject('dialogInstance');
@@ -98,12 +71,12 @@ const state = reactive({
     form: {
         userId: undefined, // 用戶ID
         username: '', // 用戶名称
-        nickname: '', // 用戶昵称
-        deptId: '', // 部门ID
+        real_name: '', // 用戶昵称
+        dept_id: '', // 部门ID
         password: '', // 用户密码
         remark: '', // 备注
         whitelist: '', // IP白名单
-        roleIds: [],
+        role_ids: [],
         merchantRoles: [], // 商户系统角色
         merchantIds: [], // 商户
     },
@@ -116,28 +89,27 @@ const state = reactive({
     merchantOptions: <any>[],
     rules: {
         username: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-        nickname: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
+        real_name: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
         password: [
             { required: true, message: '用户密码不能为空', trigger: 'blur' },
             { pattern: /^[a-zA-Z0-9]{6,16}$/, message: '用户密码长度应在6到16个字符之间', trigger: 'blur' }
         ],
-        roleIds: [{ required: true, message: '请选择角色', trigger: 'change' }],
+        role_ids: [{ required: true, message: '请选择角色', trigger: 'change' }],
     } as FormRules,
 });
 // 转为树状结构
-const treeData = computed(() => handleTree(depts.value, 'deptId', 'parentId', 'children'))
+const treeData = computed(() => handleTree(store.depts, 'id', 'parent_id', 'children'))
 onMounted(async () => {
     state.loading = true;
     try {
-        const rows = await Promise.all([getRole(), getMerchanRole(), getMerchan()]);
+        const rows = await Promise.all([store.role]);
         state.roleOptions = rows[0];
-        state.merchantRoleOptions = rows[1];
-        state.merchantOptions = rows[2];
     } catch (error) {
     }
     if (props.id) {
         const { data } = await getUserInfo({ id: props.id });
         state.form = data;
+        state.form.role_ids = data.roles.map((item: any) => item.id);
     }
     state.loading = false;
 })

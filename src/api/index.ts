@@ -33,16 +33,16 @@ export const getAllGame = (data?: any) => post('shop/game/list', data);
 export const getAllDesk = (data?: any) => post('shop/desk/list', data);
 
 // 获取所有角色
-export const getAllrole = (data?: any) => post('auth/role/all', data);
+export const getAllrole = (data?: any) => post('role/all', data);
 
 // 获取所有商户角色
-export const getAllMerchantRole = (data?: any) => post('merchant/role/all', data);
+export const getAllMerchantRole = (data?: any) => post('role/all', data);
 
 // 获取所有商户
 export const getAllMerchant = (data?: any) => post('merchant/onemerchant/all', data);
 
 // 获取所有部门
-export const getAllDept = (data?: any) => post('sys/dept/list', data);
+export const getAllDept = (data?: any) => post('department/all', data);
 
 /* 获取状态信息
  * @param data 参数{dictType} sys_normal_disable 部门状态

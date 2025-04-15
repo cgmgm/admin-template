@@ -2,35 +2,36 @@ import { storeToRefs } from 'pinia';
 import { useThemeConfig } from '@/stores/themeConfig';
 import { useUserInfo } from '@/stores/userInfo';
 import { useCats } from '@/stores/cats';
-import { computed, onMounted } from 'vue';
+import pinia from '@/stores/index';
 
 export function useConfig() {
-    const store = useThemeConfig();
-    const { themeConfig } = storeToRefs(store);
-    return { themeConfig, store };
+    const store = useThemeConfig(pinia);
+    return { themeConfig: store.themeConfig, store };
 }
 export function useUser() {
-    const store = useUserInfo();
-    const { userInfos } = storeToRefs(store);
-    return { userInfos, store };
+    const store = useUserInfo(pinia);
+    return { userInfos: store.userInfos, store };
 }
 export function useCat() {
-    const store = useCats();
-    const { dictData, depts, game, desk } = storeToRefs(store);
+    const store = useCats(pinia);
     const initDict = async (key: string) => {
         await store.getDict(key);
     };
     const getDept = async () => {
-        return await store.getAllDept();
+        await store.getAllDept();
+        return store.depts;
     };
     const getRole = async () => {
-        return await store.getAllrole();
+        await store.getAllrole();
+        return store.role;
     };
     const getMerchanRole = async () => {
-        return await store.getAllMerchanRole();
+        await store.getAllMerchanRole();
+        return store.merchanRole;
     };
     const getMerchan = async () => {
-        return await store.getAllMerchan();
+        await store.getAllMerchan();
+        return store.merchan;
     };
-    return { dictData, depts, game, desk, initDict, getDept, getRole, getMerchanRole, getMerchan };
+    return { initDict, getDept, getRole, getMerchanRole, getMerchan, store };
 }

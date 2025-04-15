@@ -42,12 +42,14 @@ export const useCats = defineStore('cats', {
 			// this.getAllDept();
 			// this.getAllDesk();
 			// return this.dictData;
+			this.getAllDept();
+			this.getAllrole();
 		},
 		// 获取所有游戏
 		async getAllGame() {
 			if (this.game?.length === 0) {
 				const res = await getAllGame();
-				this.game = res.data.list;
+				this.game = res.data;
 			}
 			return this.game;
 		},
@@ -55,7 +57,7 @@ export const useCats = defineStore('cats', {
 		async getAllDesk() {
 			if (this.desk?.length === 0) {
 				const res = await getAllDesk();
-				this.desk = res.data.list;
+				this.desk = res.data;
 			}
 			return this.desk;
 		},
@@ -63,7 +65,7 @@ export const useCats = defineStore('cats', {
 		async getAllDept() {
 			if (this.depts?.length === 0) {
 				const res = await getAllDept();
-				this.depts = res.data.list;
+				this.depts = res.data;
 			}
 			return this.depts;
 		},
@@ -71,7 +73,7 @@ export const useCats = defineStore('cats', {
 		async getAllrole() {
 			if (this.role?.length === 0) {
 				const res = await getAllrole();
-				this.role = res.data.list;
+				this.role = res.data;
 			}
 			return this.role;
 		},
@@ -79,7 +81,7 @@ export const useCats = defineStore('cats', {
 		async getAllMerchanRole() {
 			if (this.merchanRole?.length === 0) {
 				const res = await getAllMerchantRole();
-				this.merchanRole = res.data.list;
+				this.merchanRole = res.data;
 			}
 			return this.merchanRole;
 		},
@@ -87,7 +89,7 @@ export const useCats = defineStore('cats', {
 		async getAllMerchan() {
 			if (this.merchan?.length === 0) {
 				const res = await getAllMerchant();
-				this.merchan = res.data.list;
+				this.merchan = res.data;
 			}
 			return this.merchan;
 		}

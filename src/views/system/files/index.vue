@@ -20,7 +20,7 @@
                 <Table ref="tableRef" v-bind="state.tableData" @fetch="getTableData" @selectionChange="selectionChange">
                     <template #orBut>
                         <!-- 自定义按钮插槽 -->
-                        <el-button type="primary" plain @click="handleUpload" v-auth="'sys:files:upload'">
+                        <el-button type="primary" plain @click="handleUpload">
                             上传文件
                         </el-button>
                         <el-button type="danger" plain :disabled="!selectList.length" @click="handleDelete"
@@ -57,7 +57,7 @@
                         <el-descriptions-item label="MIME类型">{{ currentFile.mime_type }}</el-descriptions-item>
                         <el-descriptions-item label="创建时间">{{ currentFile.created_at }}</el-descriptions-item>
                         <el-descriptions-item label="MD5哈希值" v-if="currentFile.md5">{{ currentFile.md5
-                            }}</el-descriptions-item>
+                        }}</el-descriptions-item>
                     </el-descriptions>
                 </div>
             </template>

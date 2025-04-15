@@ -107,7 +107,7 @@ const onSignIn = async () => {
 			try {
 				const res = await login({
 					username: state.ruleForm.userName,
-					password: state.ruleForm.password,
+					password: md5(state.ruleForm.password),
 					google_captcha: state.ruleForm.google_captcha
 				});
 				// 用户信息数据

@@ -4,7 +4,11 @@ import { i18n } from '@/i18n/index'
 import IconSelector from '@/components/svgIcon/selector.vue'
 import { useConfig } from '@/mixins/useStore'
 import { createPinia } from 'pinia'
-
+declare global {
+    interface Window {
+        $dialog: any;
+    }
+}
 interface DialogOptions {
     modal?: boolean
     subtitle?: string
@@ -71,7 +75,7 @@ export function $dialog(
                 option: options,
                 content: component,
                 contentProps: props,
-                onEmit: ({ event, args }) => {
+                onEmit: ({ event, args }: { event: string, args: any[] }) => {
                     dialogInstance.$emit(event, ...args);
                 },
                 onClose: () => {
@@ -106,7 +110,7 @@ export function $dialog(
     })
 
     // 使用插件
-    subApp.use(i18n)
+    // subApp.use(i18n)
 
     // 挂载应用
     subApp.mount(container)

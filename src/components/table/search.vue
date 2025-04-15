@@ -51,7 +51,7 @@ import type { FormInstance } from 'element-plus';
 import dayjs from 'dayjs';
 import { useCat } from '@/mixins/useStore'
 
-const { dictData, depts, game, desk, initDict } = useCat();
+const { store } = useCat();
 
 /**
  * 将对象转换为包含 value 和 label 的数组
@@ -67,14 +67,14 @@ function toArr(obj: Record<string, string>): Array<{ value: string, label: strin
 // 后台定义的字典
 const dictList = computed(() => {
 	return {
-		sys_normal_disable: toArr(dictData.value.sys_normal_disable || {}),
-		sys_role_type: toArr(dictData.value.sys_role_type || {}),
-		sys_show_hide: toArr(dictData.value.sys_show_hide || {}),
-		sys_menu_type: toArr(dictData.value.sys_menu_type || {}),
-		sys_merchant_role_type: toArr(dictData.value.sys_merchant_role_type || {}),
-		sys_yes_no: toArr(dictData.value.sys_yes_no || {}),
-		sys_oper_type: toArr(dictData.value.sys_oper_type || {}),
-		sys_common_status: toArr(dictData.value.sys_common_status || {}),
+		sys_normal_disable: toArr(store.dictData.sys_normal_disable || {}),
+		sys_role_type: toArr(store.dictData.sys_role_type || {}),
+		sys_show_hide: toArr(store.dictData.sys_show_hide || {}),
+		sys_menu_type: toArr(store.dictData.sys_menu_type || {}),
+		sys_merchant_role_type: toArr(store.dictData.sys_merchant_role_type || {}),
+		sys_yes_no: toArr(store.dictData.sys_yes_no || {}),
+		sys_oper_type: toArr(store.dictData.sys_oper_type || {}),
+		sys_common_status: toArr(store.dictData.sys_common_status || {}),
 	}
 })
 

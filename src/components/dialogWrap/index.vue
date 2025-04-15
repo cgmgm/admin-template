@@ -3,7 +3,7 @@
     <el-dialog class="dialog-wrap" :class="classObj" ref="dialogRef" :title="title" :modal="true" append-to-body
         draggable v-model="dialogVisible" :close-on-press-escape="true" :destroy-on-close="false"
         :close-on-click-modal="true" :width="isMobile ? '100%' : 'auto'" @closed="handleClosed" @close="handleClose">
-        <template #title>
+        <template #header>
             {{ title }}
             <span v-if="dialogOptions.subtitle" class="subtitle">{{ dialogOptions.subtitle }}</span>
         </template>
