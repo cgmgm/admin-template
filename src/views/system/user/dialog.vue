@@ -30,7 +30,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                     <el-form-item label="角色" prop="roleIds">
-                        <el-select class="w100" v-model="state.form.roleIds" multiple collapse-tags="true"
+                        <el-select class="w100" v-model="state.form.roleIds" multiple :collapse-tags="true"
                             placeholder="请选择">
                             <el-option v-for="item in state.roleOptions" :key="item.roleId" :label="item.roleName"
                                 :value="item.roleId" :disabled="item.status == 1"></el-option>
@@ -39,7 +39,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                     <el-form-item label="商户角色" prop="merchantRoles">
-                        <el-select class="w100" v-model="state.form.merchantRoles" multiple collapse-tags="true"
+                        <el-select class="w100" v-model="state.form.merchantRoles" multiple :collapse-tags="true"
                             placeholder="请选择">
                             <el-option v-for="item in state.merchantRoleOptions" :key="item.roleId"
                                 :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
@@ -48,7 +48,7 @@
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                     <el-form-item label="所属商户" prop="merchantIds">
-                        <el-select class="w100" v-model="state.form.merchantIds" multiple collapse-tags="true"
+                        <el-select class="w100" v-model="state.form.merchantIds" multiple :collapse-tags="true"
                             placeholder="请选择">
                             <el-option v-for="item in state.merchantOptions" :key="item.id"
                                 :label="`${item.account}【${item.nickname}】`" :value="item.id"></el-option>
@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { reactive, ref, inject, computed, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getUserInfo, addUser } from '@/api'
+import { getUserInfo, saveUser } from '@/api/system'
 import { ElMessage } from 'element-plus';
 import { handleTree } from '@/utils';
 import { md5 } from "js-md5";
@@ -128,10 +128,13 @@ const state = reactive({
 const treeData = computed(() => handleTree(depts.value, 'deptId', 'parentId', 'children'))
 onMounted(async () => {
     state.loading = true;
-    const rows = await Promise.all([getRole(), getMerchanRole(), getMerchan()]);
-    state.roleOptions = rows[0];
-    state.merchantRoleOptions = rows[1];
-    state.merchantOptions = rows[2];
+    try {
+        const rows = await Promise.all([getRole(), getMerchanRole(), getMerchan()]);
+        state.roleOptions = rows[0];
+        state.merchantRoleOptions = rows[1];
+        state.merchantOptions = rows[2];
+    } catch (error) {
+    }
     if (props.id) {
         const { data } = await getUserInfo({ id: props.id });
         state.form = data;
@@ -146,7 +149,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         if (valid) {
             state.loading = true;
             const password = md5(state.form.password);
-            await addUser({ ...state.form, password });
+            await saveUser({ ...state.form, password });
             state.loading = false;
             ElMessage.success('提交成功！');
             // 可以发射任意自定义事件
@@ -167,6 +170,7 @@ const cancel = () => {
 .add-info-container {
     padding: 15px;
     width: 800px;
+    max-width: 100%;
 
 }
 </style>

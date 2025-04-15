@@ -135,5 +135,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .system-dept-dialog-container {
 	width: 600px;
+	max-width: 100%;
 }
 </style>

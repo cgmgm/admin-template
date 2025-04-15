@@ -1,6 +1,7 @@
 <template>
 	<div class="table-demo-padding layout-padding-view layout-padding-auto">
-		<TableSearch v-if="props.search.length > 0" :search="props.search" @search="onSearch">
+		<TableSearch v-if="props.search.length > 0" :search="props.search" @search="onSearch" ref="tableSearchRef"
+			:autoLoad="props.autoLoad">
 			<template #orBut>
 				<slot name="orBut"></slot>
 			</template>
@@ -73,7 +74,7 @@
 				</template>
 			</el-table>
 			<div class="table-footer mt15">
-				<el-pagination v-model:current-page="state.page.pageNum" v-model:page-size="state.page.pageSize"
+				<el-pagination v-model:current-page="state.page.pageNum" v-model:page-size="state.page.page_size"
 					:pager-count="5" :page-sizes="[20, 50, 100]" :total="tableConfig.total"
 					layout="total, sizes, prev, pager, next, jumper" background @size-change="onHandleSizeChange"
 					@current-change="onHandleCurrentChange">
@@ -178,8 +179,8 @@ const props = defineProps({
 	param: {
 		type: Object,
 		default: () => ({
-			pageNum: 1,
-			pageSize: 50,
+			page_num: 1,
+			page_size: 50,
 		}),
 	},
 	// 初始化时是否自动加载
@@ -204,6 +205,8 @@ const emit = defineEmits([
 // 添加路由实例
 const route = useRoute();
 
+// 搜索组件实例
+const tableSearchRef = ref();
 // 添加缓存相关的工具函数
 const getStorageKey = () => {
 	return `table_columns_${route.path}`;
@@ -277,12 +280,16 @@ const columns = computed({
 					.map(prop => mergedColumns.find(col => col.prop === prop))
 					.filter(Boolean) as TableColumn[];
 			}
-
-			return mergedColumns.filter((col: any) => (col.auth ? auths(col.auth) : true));
+			return mergedColumns.filter((col: any) => {
+				if (col.label) {
+					return (col.label && col.auth) ? auths(col.auth) : true;
+				}
+				return false;
+			});
 		}
 
 		// 没有缓存时���原始顺序
-		return source.map(col => ({
+		return source.filter(col => col.label).map(col => ({
 			...col,
 			align: col.align || 'left',
 			showOverflowTooltip: col.showOverflowTooltip ?? true,
@@ -311,8 +318,8 @@ const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
 const state = reactive({
 	page: {
-		pageNum: props.param?.pageNum || 1,
-		pageSize: props.param?.pageSize || 50,
+		page_num: props.param?.page_num || 1,
+		page_size: props.param?.page_size || 50,
 	},
 	searchParams: {}, // 存储搜索参数
 	selectlist: [] as EmptyObjectType[],
@@ -365,14 +372,6 @@ onMounted(() => {
 	state.isSelection = props.config?.isSelection ?? false;
 	document.addEventListener('click', closeContextMenu);
 	document.addEventListener('click', closePanel);
-	// 如果自动加载，则触发数据获取
-	if (props.autoLoad) {
-		emit('fetch', {
-			...state.searchParams,
-			pageNum: state.page.pageNum,
-			pageSize: state.page.pageSize
-		});
-	}
 });
 
 // 修改计算可见列的逻辑
@@ -469,18 +468,18 @@ const getSelect = () => {
 }
 // 分页改变
 const onHandleSizeChange = (val: number) => {
-	state.page.pageSize = val;
+	state.page.page_size = val;
 	fetchData();
 };
 // 分页改变
 const onHandleCurrentChange = (val: number) => {
-	state.page.pageNum = val;
+	state.page.page_num = val;
 	fetchData();
 };
 // 搜索时，分页还原成默认
 const pageReset = () => {
-	state.page.pageNum = props.param?.pageNum || 1;
-	state.page.pageSize = props.param?.pageSize || 50;
+	state.page.page_num = props.param?.page_num || 1;
+	state.page.page_size = props.param?.page_size || 50;
 	state.searchParams = {}; // 清空搜索参数
 	fetchData();
 };
@@ -627,8 +626,8 @@ const onSearch = (params: any) => {
 const fetchData = () => {
 	emit('fetch', {
 		...state.searchParams,
-		pageNum: state.page.pageNum,
-		pageSize: state.page.pageSize
+		page_num: state.page.page_num,
+		page_size: state.page.page_size
 	});
 };
 

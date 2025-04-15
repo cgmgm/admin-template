@@ -63,7 +63,7 @@
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="组件路径">
-							<el-input v-model="state.ruleForm.componentAlias" placeholder="组件路径" clearable></el-input>
+							<el-input v-model="state.ruleForm.component" placeholder="组件路径" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
@@ -136,6 +136,9 @@ import { defineAsyncComponent, reactive, onMounted, ref, nextTick, inject } from
 import { i18n } from '@/i18n/index';
 import { saveMenu } from '@/api/system';
 import { ElMessage } from 'element-plus';
+import { initBackEndControlRoutes } from '@/router/backEnd';
+import { useRoutesList } from '@/stores/routesList';
+import pinia from '@/stores/index';
 
 
 const dialogInstance = inject('dialogInstance');
@@ -157,7 +160,7 @@ const props = defineProps({
 	},
 });
 // 引入组件
-const IconSelector = defineAsyncComponent(() => import('@/components/iconSelector/index.vue'));
+const IconSelector = defineAsyncComponent(() => import('@/components/svgIcon/selector.vue'));
 
 // 定义初始表单数据
 const initialFormState = {
@@ -165,7 +168,6 @@ const initialFormState = {
 	type: 'menu', // 菜单类型
 	name: '', // 路由名称
 	component: '', // 组件路径
-	componentAlias: '', // 组件路径别名
 	isLink: false, // 是否外链
 	sort: 0, // 菜单排序
 	path: '', // 路由路径
@@ -216,21 +218,29 @@ const getMenuData = (routes: any) => {
 	});
 	return arr;
 };
+const storesRoutesList = useRoutesList(pinia);
+// 通过pid查找父级路径
+const findParentPath = (parentId: number | string, arr: any[] = []): any[] => {
+	if (!parentId) return arr;
+	const parent = storesRoutesList.backEndRoutes.find((val: any) => val.id === parentId);
+	if (parent) {
+		arr.unshift(parent.path);
+		return findParentPath(parent.parent_id, arr);
+	}
+	return arr;
+}
 // 打开弹窗
 const openDialog = (type: string, row?: any) => {
 	if (type === 'edit') {
 		// 编辑模式时，只覆盖传入的字段，保留其他默认值
 		Object.assign(state.ruleForm, row);
-		if (!state.ruleForm.meta) state.ruleForm.meta = {};
-		if (!state.ruleForm.meta.icon) state.ruleForm.meta.icon = '';
+		// 如果 meta 为空，则赋值为初始值
+		if (!state.ruleForm.meta) state.ruleForm.meta = initialFormState.meta;
+		// 如果 meta 为字符串，则转换为对象
+		if (typeof state.ruleForm.meta == 'string') state.ruleForm.meta = JSON.parse(state.ruleForm.meta);
+
 		let menuSuperior: any[] = [];
-		let path = '';
-		row.path.split('/').forEach((e: any) => {
-			if (!e) return;
-			path += '/' + e;
-			menuSuperior.push(path);
-		});
-		menuSuperior.pop();
+		menuSuperior = findParentPath(row.parent_id);
 		state.ruleForm.menuSuperior = menuSuperior;
 	} else {
 		if (row?.path) {
@@ -269,12 +279,14 @@ const onSubmit = async () => {
 		parent_id,
 	};
 	delete submitData.menuSuperior; // 删除 menuSuperior 字段
-	if (state.ruleForm.type === 'btn') {
+	if (state.ruleForm.type === 'button') {
 		submitData.meta.isHide = true;
+		submitData.meta.title = state.ruleForm.name;
 	}
 	try {
 		// TODO: 调用保存接口
 		const res = await saveMenu(submitData);
+		initBackEndControlRoutes();
 		onCancel(); // 关闭弹窗
 		ElMessage.success('保存成功');
 		(dialogInstance as any)?.$emit('success');
@@ -286,12 +298,12 @@ const onSubmit = async () => {
 };
 const handleRoutesList = (arr: any) => {
 	arr.forEach((item: any) => {
+		if (typeof item.meta == 'string') item.meta = JSON.parse(item.meta);
 		item.title = i18n.global.t(item.meta?.title as string);
 		if (item.children && item.children.length > 0) {
 			item.children = handleRoutesList(item.children);
 		}
 	});
-	console.log(arr);
 	return arr;
 }
 // 页面加载时
@@ -308,5 +320,6 @@ defineExpose({
 <style scoped lang="scss">
 .system-menu-dialog-container {
 	width: 900px;
+	max-width: 100%;
 }
 </style>

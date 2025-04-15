@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, inject, onMounted } from 'vue';
-import { getGoogleCode } from '@/api'
+import { getGoogleCode } from '@/api/system'
 import { ElMessage } from 'element-plus';
 import { md5 } from "js-md5";
 import { useCat } from '@/mixins/useStore';

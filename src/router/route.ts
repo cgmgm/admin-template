@@ -62,6 +62,21 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 					icon: 'iconfont icon-shouye',
 				},
 			},
+			// {
+			// 	path: '/make/codegen',
+			// 	name: 'codeGenerator',
+			// 	component: () => import('@/views/make/codegen/index.vue'),
+			// 	meta: {
+			// 		title: '代码生成工具',
+			// 		isLink: '',
+			// 		isHide: false,
+			// 		isKeepAlive: true,
+			// 		isAffix: false,
+			// 		isIframe: false,
+			// 		roles: ['admin'],
+			// 		icon: 'iconfont icon-shengchengdaima',
+			// 	},
+			// },
 		]
 	}
 ];

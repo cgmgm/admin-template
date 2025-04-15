@@ -59,17 +59,6 @@ export const getStatus = (data?: any) => get('sys/dictData/list', data);
 
 // 获取所有用户
 export const getUserList = (data?: any) => post('sys/user/list', data);
-// 获取用户信息
-export const getUserInfo = (data?: any) => post('sys/user/get', data);
-// 删除用户
-export const addUser = (data?: any) => post('sys/user/add', data);
-// 删除用户
-export const delUser = (data?: any) => post('sys/user/del', data);
-
-// 重置密码
-export const resetpwd = (data?: any) => post('sys/user/resetpwd', data);
-// 重置密码
-export const getGoogleCode = (data?: any) => post('getGoogleCode', data);
 
 
 

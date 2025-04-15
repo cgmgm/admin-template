@@ -74,6 +74,10 @@ export const createColumn = (
     };
 };
 const icons = { Delete, Edit, Search, Share, Upload };
+const buttonType = {
+    delete: 'danger',
+    add: 'success',
+}
 /**
  * 创建操作列，有删除和编辑按钮
  * @param options 其他选项
@@ -81,7 +85,8 @@ const icons = { Delete, Edit, Search, Share, Upload };
  */
 export const createActionColumn = (bntList: Object[], options: Partial<TableColumn> = {}) => {
     bntList = bntList.filter((col: any) => (col.auth ? auths(col.auth) : true));
-    const width = bntList.length * 85;
+    if (!bntList.length) return createColumn('', 'action', { width: 80 });
+    const width = bntList.length * (bntList.length == 1 ? 130 : 82);
     return createColumn('操作', 'action', {
         ...options,
         fixed: 'right',
@@ -91,7 +96,8 @@ export const createActionColumn = (bntList: Object[], options: Partial<TableColu
                 const IconComponent = icons[item.icon]
                 const button = (
                     <ElButton
-                        type="text"
+                        link
+                        type={buttonType[item.key as keyof typeof buttonType] || 'primary'}
                         onClick={() => !item.poptext && item.onClick(item, row)}
                     >
                         {IconComponent && <ElIcon><IconComponent /></ElIcon>}

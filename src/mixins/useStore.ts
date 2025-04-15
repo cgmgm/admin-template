@@ -20,6 +20,9 @@ export function useCat() {
     const initDict = async (key: string) => {
         await store.getDict(key);
     };
+    const getDept = async () => {
+        return await store.getAllDept();
+    };
     const getRole = async () => {
         return await store.getAllrole();
     };
@@ -29,5 +32,5 @@ export function useCat() {
     const getMerchan = async () => {
         return await store.getAllMerchan();
     };
-    return { dictData, depts, game, desk, initDict, getRole, getMerchanRole, getMerchan };
+    return { dictData, depts, game, desk, initDict, getDept, getRole, getMerchanRole, getMerchan };
 }

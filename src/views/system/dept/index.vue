@@ -2,7 +2,7 @@
 	<div class="container layout-pd">
 		<Table ref="tableRef" v-bind="state.tableData" @fetch="getTableData" @valueChange="valueChange">
 			<template #orBut>
-				<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:dept:add'">
+				<el-button type="primary" plain @click="handleBack.add" v-auth="'保存部门'">
 					新增
 				</el-button>
 			</template>
@@ -28,7 +28,7 @@ const handleBack = {
 	edit: (e: any) => {
 		openDialog('edit', e);
 	},
-	handleDelete: (e?: any) => {
+	delete: (e?: any) => {
 		ElMessageBox.confirm('是否确认删除该数据项?', '警告', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
@@ -62,9 +62,9 @@ const state = reactive<{ tableData: TableData }>({
 			}),
 			createColumn('创建时间', 'created_at'),
 			createActionColumn([
-				{ key: 'add', text: '新增', onClick: actionBack, auth: 'sys:dept:add', icon: 'Upload' },
-				{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:dept:edit', icon: 'Edit' },
-				{ key: 'handleDelete', text: '删除', onClick: actionBack, auth: 'sys:dept:del', icon: 'Delete', poptext: '是否确认删除？' }
+				{ key: 'add', text: '新增', onClick: actionBack, auth: '保存部门', icon: 'Upload' },
+				{ key: 'edit', text: '修改', onClick: actionBack, auth: '保存部门', icon: 'Edit' },
+				{ key: 'delete', text: '删除', onClick: actionBack, auth: '删除部门', icon: 'Delete', poptext: '是否确认删除？' }
 			]),
 		],
 		search: [

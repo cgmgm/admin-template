@@ -133,5 +133,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .system-role-dialog-container {
 	width: 600px;
+	max-width: 100%;
 }
 </style>

@@ -16,6 +16,8 @@ import { useMenuApi } from '@/api/menu/index';
 // 引入 api 请求接口
 const menuApi = useMenuApi();
 
+let dynamicRoutesBase: any = [...dynamicRoutes[0].children as any];
+
 /**
  * 获取目录下的 .vue、.tsx 全部文件
  * @method import.meta.glob
@@ -45,11 +47,12 @@ export async function initBackEndControlRoutes() {
 	const res = await getBackEndControlRoutes();
 	// 无登录权限时，添加判断
 	// https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
-	if (res.data.length <= 0) return Promise.resolve(true);
-	// 存储接口原始路由（未处理component），根据需求选择使用
-	useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(res.data)));
-	// 处理路由（component），替换 dynamicRoutes（@/router/route）第一个顶级 children 的路由
-	dynamicRoutes[0].children = [...dynamicRoutes[0].children, ...await backEndComponent(res.data)];
+	if (res?.data?.length) {
+		// 存储接口原始路由（未处理component），根据需求选择使用
+		useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(res?.data)));
+		dynamicRoutes[0].children = [...dynamicRoutesBase, ...await backEndComponent(res?.data || [])];
+	};
+
 	// 添加动态路由
 	await setAddRoute();
 	// 设置路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
@@ -108,46 +111,7 @@ export async function setAddRoute() {
  */
 export async function getBackEndControlRoutes() {
 	const res = await menuApi.getMenu();
-	// 处理后端返回的路由数据
-	const backEndRoutes: any = res.data;
-	if (!backEndRoutes) return;
-	backEndRoutes.forEach((item: any) => {
-		// 将 parent_id 转换为 menuSuperior
-		if (item.parent_id !== undefined) {
-			item.menuSuperior = item.parent_id;
-			delete item.parent_id;
-		}
-
-		// 将 meta 从 JSON 字符串转换为对象
-		if (item.meta && typeof item.meta === 'string') {
-			try {
-				item.meta = JSON.parse(item.meta);
-			} catch (error) {
-				console.error(`路由 ${item.path} 的 meta 数据解析失败:`, error);
-			}
-		}
-
-		// 处理子路由的数据转换
-		if (item.children && item.children.length > 0) {
-			item.children.forEach((child: any) => {
-				// 子路由也进行 parent_id 转换
-				if (child.parent_id !== undefined) {
-					child.menuSuperior = child.parent_id;
-					delete child.parent_id;
-				}
-
-				// 处理子路由的 meta
-				if (child.meta && typeof child.meta === 'string') {
-					try {
-						child.meta = JSON.parse(child.meta);
-					} catch (error) {
-						console.error(`子路由 ${child.path} 的 meta 数据解析失败:`, error);
-					}
-				}
-			});
-		}
-	});
-	return res;
+	return { ...res };
 }
 
 /**
@@ -156,7 +120,7 @@ export async function getBackEndControlRoutes() {
  * @description 路径：/src/views/system/menu/component/addMenu.vue
  */
 export async function setBackEndControlRefreshRoutes() {
-	await getBackEndControlRoutes();
+	// await getBackEndControlRoutes();
 }
 
 /**

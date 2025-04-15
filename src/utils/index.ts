@@ -78,6 +78,7 @@ export function letterAvatar(name: string, size = 60, color = '') {
  * @param {*} children 孩子节点字段 默认 'children'
  */
 export function handleTree(data: any, id: string, parentId: string, children: string) {
+    if (!data?.length) return [];
     let config = {
         id: id || 'id',
         parentId: parentId || 'parentId',

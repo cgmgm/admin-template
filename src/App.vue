@@ -57,17 +57,22 @@ const getGlobalI18n = computed(() => {
 
 
 const handleGlobalClick = (event: MouseEvent) => {
+	return;
 	const target = event.target as HTMLElement;
 	const tableDemoPadding = document.querySelector('.table-demo-padding') as HTMLElement;
 	if (!tableDemoPadding) return;
 	// 检查点击的元素或其祖先元素是否包含指定的类名
 	const isInspectorButton = hasInspectorButtonClass(target);
 
+	const container = document.querySelector('.container') as HTMLElement;
 	if (isInspectorButton) {
-		tableDemoPadding.style.pointerEvents = 'none';
+		// class container
+		if (container) {
+		}
 		// 在这里添加你想要的处理逻辑
 	} else {
-		tableDemoPadding.style.pointerEvents = '';
+		if (container) {
+		}
 		// 处理其他情况
 	}
 };
@@ -112,7 +117,7 @@ onMounted(() => {
 // 页面销毁时，关闭监听布局配置/i18n监听
 onUnmounted(() => {
 	mittBus.off('openSetingsDrawer', () => { });
-	document.removeEventListener('click', handleGlobalClick);
+	if (import.meta.env.MODE == 'development') document.removeEventListener('click', handleGlobalClick);
 });
 // 监听路由的变化，设置网站标题
 watch(

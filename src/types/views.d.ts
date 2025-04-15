@@ -308,6 +308,7 @@ declare type TableSearchType = {
 	placeholder?: string;
 	required?: boolean;
 	type: string;
+	default?: string | number | string[] | number[];
 	value?: string | number | string[] | number[];
 	options?: SelectOptionType[];
 };

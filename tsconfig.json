@@ -77,7 +77,8 @@
 		"src/**/*.vue",
 		"src/**/*.tsx",
 		"src/**/*.d.ts",
-		"src/types/global.d.ts"
+		"src/types/global.d.ts",
+		"src/types/jsx.d.ts"
 	], // **Represents any directory, and * represents any file. Indicates that all files in the src directory will be compiled
 	"exclude": [
 		"node_modules",

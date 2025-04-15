@@ -1,9 +1,9 @@
 <template>
 	<div class="table-search-container" v-if="props.search.length > 0">
-		<el-form ref="tableSearchRef" :model="state.form" size="default" label-width="100px" class="table-form">
+		<el-form ref="tableSearchRef" :model="state.form" size="default" class="table-form">
 			<el-row ref="searchRowRef" class="search-row">
-				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb5" v-for="(val, key) in search" :key="key"
-					v-show="key < state.visibleCount || state.isToggle">
+				<el-col :xs="24" :sm="12" :md="6" :lg="4" :xl="4" class="mb5" v-for="(val, key) in search" :key="key"
+					v-show="key < state.visibleCount || state.isToggle || state.form[val.prop]">
 					<template v-if="val.type !== ''">
 						<el-form-item :label="val.label" :prop="val.prop"
 							:rules="[{ required: val.required, message: `${val.label}不能为空`, trigger: val.type === 'input' ? 'blur' : 'change' }]">
@@ -26,21 +26,20 @@
 						</el-form-item>
 					</template>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb5">
-					<el-form-item class="table-form-btn" :label-width="search.length <= 1 ? '10px' : '5px'">
-						<template #label v-if="search.length > state.visibleCount">
-							<div class="table-form-btn-toggle ml10" @click="state.isToggle = !state.isToggle">
-								<span>{{ state.isToggle ? '收起筛选' : '展开筛选' }}</span>
-								<SvgIcon :name="state.isToggle ? 'ele-ArrowUp' : 'ele-ArrowDown'" />
-							</div>
-						</template>
-						<div style="display: flex;gap:5px;flex-wrap: wrap;">
-							<el-button size="default" type="primary" @click="onSearch(tableSearchRef)">查询</el-button>
-							<el-button size="default" type="info" @click="onReset(tableSearchRef)">重置</el-button>
-							<slot name="orBut"></slot>
-						</div>
-					</el-form-item>
-				</el-col>
+				<el-form-item class="table-form-btn mb5" v-if="search.length > state.visibleCount"
+					:label-width="search.length <= 1 ? '10px' : '5px'">
+					<div class="table-form-btn-toggle ml10" @click="state.isToggle = !state.isToggle">
+						<span>{{ state.isToggle ? '收起筛选' : '展开筛选' }}</span>
+						<SvgIcon :name="state.isToggle ? 'ele-ArrowUp' : 'ele-ArrowDown'" />
+					</div>
+				</el-form-item>
+				<el-form-item class="table-form-btn ml10" style="align-self: flex-start;">
+					<div style="display: flex;gap:5px;">
+						<el-button size="default" type="primary" @click="onSearch()">查询</el-button>
+						<el-button size="default" type="info" @click="onReset()">重置</el-button>
+						<slot name="orBut"></slot>
+					</div>
+				</el-form-item>
 			</el-row>
 		</el-form>
 	</div>
@@ -65,6 +64,7 @@ function toArr(obj: Record<string, string>): Array<{ value: string, label: strin
 		label
 	}));
 }
+// 后台定义的字典
 const dictList = computed(() => {
 	return {
 		sys_normal_disable: toArr(dictData.value.sys_normal_disable || {}),
@@ -83,6 +83,10 @@ const props = defineProps({
 	search: {
 		type: Array<TableSearchType>,
 		default: () => [],
+	},
+	autoLoad: {
+		type: Boolean,
+		default: true,
 	},
 });
 
@@ -124,7 +128,7 @@ const handleResize = () => {
 const initFormField = () => {
 	if (props.search.length <= 0) return false;
 	props.search.forEach((v) => {
-		if (v.type === 'datetimerange') {
+		if (v.type === 'datetimerange' && v.default) {
 			state.form[v.prop] = [
 				dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
 				dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss'),
@@ -133,12 +137,13 @@ const initFormField = () => {
 
 		}
 		// 使用配置中的 value 作为默认值，如果没有则使用空字符串
-		state.form[v.prop] = v.value ?? '';
+		state.form[v.prop] = v.value ?? undefined;
 	});
 };
 
 // 查询
-const onSearch = (formEl: FormInstance | undefined) => {
+const onSearch = () => {
+	const formEl = tableSearchRef.value;
 	if (!formEl) return;
 	formEl.validate((valid: boolean) => {
 		if (valid) {
@@ -150,7 +155,8 @@ const onSearch = (formEl: FormInstance | undefined) => {
 };
 
 // 重置
-const onReset = (formEl: FormInstance | undefined) => {
+const onReset = () => {
+	const formEl = tableSearchRef.value;
 	if (!formEl) return;
 	formEl.resetFields();
 	initFormField();
@@ -239,12 +245,20 @@ onMounted(() => {
 	initFormField();
 	setVisibleCountByScreen();
 	window.addEventListener('resize', handleResize);
+	if (props.autoLoad) {
+		onSearch();
+	}
 });
 
 // 组件卸载时移除事件监听
 onUnmounted(() => {
 	window.removeEventListener('resize', handleResize);
 });
+
+defineExpose({
+	resetForm: onReset,
+	search: onSearch
+})
 </script>
 
 <style scoped lang="scss">
@@ -264,6 +278,17 @@ onUnmounted(() => {
 
 		.search-row {
 			width: 100%;
+
+			:deep(.el-form-item__label) {
+				padding-right: 5px;
+				padding-left: 10px;
+				width: auto !important;
+				min-width: 60px;
+			}
+
+			:deep(.el-form-item) {
+				margin-bottom: 0px !important;
+			}
 		}
 
 		.table-form-btn-toggle {

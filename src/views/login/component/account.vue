@@ -118,7 +118,6 @@ const onSignIn = async () => {
 					avatar: res.data.avatar || letterAvatar(res.data.username),
 					time: new Date().getTime(),
 					roles: res.data.roles,
-					authBtnList: res.data.auths,
 				};
 				// 存储 token 到浏览器缓存
 				Session.set('token', res.data.token);
@@ -138,7 +137,6 @@ const onSignIn = async () => {
 				// 执行完 initBackEndControlRoutes，再执行 signInSuccess
 				signInSuccess();
 			} catch (error: any) {
-				console.log(error, 'debugm')
 				// ElMessage.error(error.message);
 			} finally {
 				state.loading.signIn = false;

@@ -21,11 +21,8 @@
 					@valueChange="valueChange">
 					<template #orBut>
 						<!-- 自定义按钮插槽 -->
-						<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:user:add'">
+						<el-button type="primary" plain @click="handleBack.add" v-auth="'保存用户'">
 							新增
-						</el-button>
-						<el-button type="danger" plain :disabled="false" @click="handleDelete" v-auth="'sys:user:del'">
-							删除
 						</el-button>
 					</template>
 				</Table>
@@ -42,26 +39,27 @@ import { ElMessage, ElMessageBox, ElImage, ElTag } from 'element-plus'
 import { letterAvatar } from '@/utils/index';
 import { handleTree } from '@/utils';
 import { Search } from '@element-plus/icons-vue';
-import * as dialog from './dialog.vue';
-import * as rePwd from './re-pwd.vue';
-import * as watchQrcord from './watch-qrcode.vue';
+import dialog from './dialog.vue';
+import rePwd from './re-pwd.vue';
+import watchQrcord from './watch-qrcode.vue';
 import { getUsers as getList, delUser as del } from '@/api/system';
 // 引入组件
 const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
-const { depts } = useCat();
+const { depts, getDept } = useCat();
 
 const handleBack = {
 	add: () => {
 		openDialog();
 	},
 	edit: (e: any) => {
-		openDialog(e.userId);
+		openDialog(e.id);
 	},
 	rePwd: (e: any) => {
-		(window as any).$dialog('重置密码', rePwd, { id: e.userId });
+		console.log(e);
+		(window as any).$dialog('重置密码', rePwd, { id: e.id });
 	},
-	handleDelete: (e?: any) => {
-		del({ id: e.userId }).then(() => {
+	delete: (e?: any) => {
+		del({ id: e.id }).then(() => {
 			getTableData(queryParams);
 			ElMessage.success('删除成功');
 		});
@@ -90,7 +88,7 @@ const actionBack = (item: any, row: any) => {
 	handleBack[item.key as keyof typeof handleBack]?.(row);
 }
 // 转为树状结构
-const treeData = computed(() => handleTree(depts.value, 'deptId', 'parentId', 'children'))
+const treeData = computed(() => handleTree(getDept(), 'deptId', 'parentId', 'children'))
 
 // 过滤筛选
 const tree = ref();
@@ -126,14 +124,14 @@ const state = reactive<{ tableData: TableData }>({
 					return <span>{row.roles.map((item: any) => item.name).join(',')}</span>
 				}
 			}),
-			createColumn('状态', 'is_deleted', { type: 'switch', activeValue: 0, inactiveValue: 1, activeText: '正常', inactiveText: '禁止' }),
-			createColumn('谷歌验证码开关', 'is_enabled_ga', { type: 'switch', activeText: '开', inactiveText: '关' }),
+			createColumn('状态', 'status', { type: 'switch', activeValue: 0, inactiveValue: 1, activeText: '正常', inactiveText: '禁止' }),
+			createColumn('谷歌验证码开关', 'parent_id', { type: 'switch', activeText: '开', inactiveText: '关' }),
 			createColumn('创建时间', 'created_at'),
 			createActionColumn([
-				{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:user:edit', icon: 'Edit' },
-				{ key: 'rePwd', text: '重置密码', onClick: actionBack, auth: 'sys:user:resetpwd', icon: 'Edit' },
-				{ key: 'handleDelete', text: '删除', onClick: actionBack, poptext: '是否确认删除？', auth: 'sys:user:del', icon: 'Delete' },
-				{ key: 'showgacode', text: '查看二维码', onClick: actionBack, auth: 'sys:user:showgacode', icon: 'Edit' }
+				{ key: 'edit', text: '修改', onClick: actionBack, auth: '保存用户', icon: 'Edit' },
+				{ key: 'rePwd', text: '重置密码', onClick: actionBack, auth: '保存用户', icon: 'Edit' },
+				{ key: 'delete', text: '删除', onClick: actionBack, poptext: '是否确认删除？', auth: '删除用户', icon: 'Delete' },
+				{ key: 'showgacode', text: '查看二维码', onClick: actionBack, icon: 'Edit' }
 			]),
 
 		],
@@ -149,6 +147,7 @@ const state = reactive<{ tableData: TableData }>({
 				placeholder: '用户状态',
 				optionKey: 'sys_normal_disable'
 			}),
+			createSearchItem('名称', 'name', 'datetimerange', { placeholder: '请输入名称' })
 		],
 		config: {
 			isSelection: true

@@ -1,4 +1,4 @@
-import { useUserInfo } from '@/stores/userInfo';
+import { useRoutesList } from '@/stores/routesList';
 import { judementSameArr } from '@/utils/arrayOperation';
 
 /**
@@ -7,10 +7,8 @@ import { judementSameArr } from '@/utils/arrayOperation';
  * @returns 有权限，返回 `true`，反之则反
  */
 export function auth(value: string): boolean {
-	const stores = useUserInfo();
-	const allPermission = '*'
-	// return stores.userInfos.authBtnList.some((v: string) => allPermission == v || v === value);
-	return true;
+	const stores = useRoutesList();
+	return stores.btnList.some((v: any) => value == v.name);
 }
 
 /**
@@ -20,12 +18,10 @@ export function auth(value: string): boolean {
  */
 export function auths(value: Array<string> | string): boolean {
 	if (typeof value === 'string') return auth(value);
-	const stores = useUserInfo();
-	const allPermission = '*'
-	// return stores.userInfos.authBtnList.some((val: string) => {
-	// 	return allPermission == val || value.includes(val)
-	// });
-	return true;
+	const stores = useRoutesList();
+	return stores.btnList.some((val: any) => {
+		return val.name == value || value.includes(val.name)
+	});
 }
 
 /**
@@ -34,7 +30,6 @@ export function auths(value: Array<string> | string): boolean {
  * @returns 有权限，返回 `true`，反之则反
  */
 export function authAll(value: Array<string>): boolean {
-	const stores = useUserInfo();
-	// return judementSameArr(value, stores.userInfos.authBtnList);
-	return true;
+	const stores = useRoutesList();
+	return judementSameArr(value, stores.btnList.map((v: any) => v.name));
 }

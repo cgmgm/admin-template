@@ -28,7 +28,7 @@ const handleBack = {
 	edit: (e: any) => {
 		openDialog('edit', e);
 	},
-	handleDelete: (e?: any) => {
+	delete: (e?: any) => {
 		ElMessageBox.confirm('是否确认删除该数据项?', '警告', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
@@ -54,8 +54,8 @@ const state = reactive<{ tableData: TableData }>({
 			createColumn('描述', 'description'),
 			createColumn('创建时间', 'created_at'),
 			createActionColumn([
-				{ key: 'edit', text: '修改', onClick: actionBack, auth: 'sys:role:edit', icon: 'Edit' },
-				{ key: 'handleDelete', text: '删除', onClick: actionBack, auth: 'sys:role:del', icon: 'Delete', poptext: '是否确认删除？' }
+				{ key: 'edit', text: '修改', onClick: actionBack, auth: '保存角色', icon: 'Edit' },
+				{ key: 'delete', text: '删除', onClick: actionBack, auth: '删除角色', icon: 'Delete', poptext: '是否确认删除？' }
 			]),
 		],
 		search: [

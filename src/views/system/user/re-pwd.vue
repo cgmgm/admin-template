@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { reactive, ref, inject, computed, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getUserInfo, resetpwd } from '@/api'
+import { getUserInfo, saveUser } from '@/api/system'
 import { ElMessage } from 'element-plus';
 import { handleTree } from '@/utils';
 import { md5 } from "js-md5";
@@ -106,7 +106,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             state.loading = true;
             const password = md5(state.form.password);
             const repassword = md5(state.form.repassword)
-            await resetpwd({ ...state.form, password, repassword });
+            await saveUser({ ...state.form, password, repassword });
             state.loading = false;
             ElMessage.success('提交成功！');
             // 可以发射任意自定义事件
