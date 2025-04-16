@@ -40,8 +40,6 @@ import { reactive, ref, inject, computed, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { getAdminInfo, saveAdmin } from '@/api/system'
 import { ElMessage } from 'element-plus';
-import { handleTree } from '@/utils';
-import { md5 } from "js-md5";
 import { useCat } from '@/mixins/useStore';
 const { store } = useCat();
 // 定义变量内容
@@ -104,8 +102,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
                 return cancel();
             }
             state.loading = true;
-            const password = md5(state.form.password);
-            const repassword = md5(state.form.repassword)
+            const password = state.form.password;
+            const repassword = state.form.repassword;
             await saveAdmin({ ...state.form, password, repassword });
             state.loading = false;
             ElMessage.success('提交成功！');

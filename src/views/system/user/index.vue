@@ -88,7 +88,7 @@ const actionBack = (item: any, row: any) => {
 	handleBack[item.key as keyof typeof handleBack]?.(row);
 }
 // 转为树状结构
-const treeData = computed(() => handleTree(store.depts, 'id', 'parent_id', 'children'))
+const treeData = computed(() => handleTree(JSON.parse(JSON.stringify(store.depts)) || [], 'id', 'parent_id', 'children'))
 
 // 过滤筛选
 const tree = ref();

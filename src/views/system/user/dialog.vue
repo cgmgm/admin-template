@@ -90,15 +90,11 @@ const state = reactive({
     rules: {
         username: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
         real_name: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
-        password: [
-            { required: true, message: '用户密码不能为空', trigger: 'blur' },
-            { pattern: /^[a-zA-Z0-9]{6,16}$/, message: '用户密码长度应在6到16个字符之间', trigger: 'blur' }
-        ],
         role_ids: [{ required: true, message: '请选择角色', trigger: 'change' }],
     } as FormRules,
 });
 // 转为树状结构
-const treeData = computed(() => handleTree(store.depts, 'id', 'parent_id', 'children'))
+const treeData = computed(() => handleTree(JSON.parse(JSON.stringify(store.depts)) || [], 'id', 'parent_id', 'children'));
 onMounted(async () => {
     state.loading = true;
     try {
@@ -110,6 +106,8 @@ onMounted(async () => {
         const { data } = await getAdminInfo({ id: props.id });
         state.form = data;
         state.form.role_ids = data.roles.map((item: any) => item.id);
+    } else {
+        // state.rules.password = [{ required: true, message: '用户密码不能为空', trigger: 'blur' }, { pattern: /^[a-zA-Z0-9]{6,16}$/, message: '用户密码长度应在6到16个字符之间', trigger: 'blur' }]
     }
     state.loading = false;
 })
@@ -120,7 +118,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid: boolean) => {
         if (valid) {
             state.loading = true;
-            const password = md5(state.form.password);
+            const password = state.form.password;
             await saveAdmin({ ...state.form, password });
             state.loading = false;
             ElMessage.success('提交成功！');
