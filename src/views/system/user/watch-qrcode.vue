@@ -58,7 +58,7 @@ onMounted(async () => {
 
     state.form = props.data
     // 创建新的二维码实例
-    const row = await getGoogleCode({ id: props.data.userId });
+    const row = await getGoogleCode({ id: props.data.aId });
 
     new QRCode(qrcodeRef.value, {
         text: row.data, // 要编码的文本

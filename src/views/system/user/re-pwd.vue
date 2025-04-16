@@ -38,12 +38,12 @@
 <script setup lang="ts">
 import { reactive, ref, inject, computed, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getUserInfo, saveUser } from '@/api/system'
+import { getAdminInfo, saveAdmin } from '@/api/system'
 import { ElMessage } from 'element-plus';
 import { handleTree } from '@/utils';
 import { md5 } from "js-md5";
 import { useCat } from '@/mixins/useStore';
-const { depts, getRole, getMerchanRole, getMerchan } = useCat();
+const { store } = useCat();
 // 定义变量内容
 const formRef = ref<FormInstance>();
 const dialogInstance = inject('dialogInstance');
@@ -56,7 +56,7 @@ const props = defineProps({
 });
 const state = reactive({
     form: {
-        userId: props.id, // 用戶ID
+        aId: props.id, // 用戶ID
         username: '', // 用戶名称
         nickname: '', // 用戶昵称
         password: '', // 用户密码
@@ -88,7 +88,7 @@ const state = reactive({
 onMounted(async () => {
     state.loading = true;
     if (props.id) {
-        const { data } = await getUserInfo({ id: props.id });
+        const { data } = await getAdminInfo({ id: props.id });
         state.form = data;
     }
     state.loading = false;
@@ -99,14 +99,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate(async (valid: boolean) => {
         if (valid) {
-            if (!state.form.userId) {
+            if (!state.form.aId) {
                 ElMessage.success('操作异常');
                 return cancel();
             }
             state.loading = true;
             const password = md5(state.form.password);
             const repassword = md5(state.form.repassword)
-            await saveUser({ ...state.form, password, repassword });
+            await saveAdmin({ ...state.form, password, repassword });
             state.loading = false;
             ElMessage.success('提交成功！');
             // 可以发射任意自定义事件

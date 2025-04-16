@@ -107,12 +107,12 @@ const onSignIn = async () => {
 			try {
 				const res = await login({
 					username: state.ruleForm.userName,
-					password: md5(state.ruleForm.password),
+					password: state.ruleForm.password,
 					google_captcha: state.ruleForm.google_captcha
 				});
 				// 用户信息数据
 				const userInfos = {
-					userId: res.data.id,
+					aId: res.data.id,
 					userName: res.data.username,
 					nickname: res.data.nickname,
 					avatar: res.data.avatar || letterAvatar(res.data.username),

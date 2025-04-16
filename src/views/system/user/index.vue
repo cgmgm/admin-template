@@ -9,7 +9,7 @@
 							style="margin-bottom: 20px" />
 					</div>
 					<div class="head-container">
-						<el-tree :data="treeData" :props="{ children: 'children', label: 'deptName' }" node-key="deptId"
+						<el-tree :data="treeData" :props="{ children: 'children', label: 'name' }" node-key="id"
 							:expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" default-expand-all
 							@node-click="handleNodeClick" />
 					</div>
@@ -42,10 +42,10 @@ import { Search } from '@element-plus/icons-vue';
 import dialog from './dialog.vue';
 import rePwd from './re-pwd.vue';
 import watchQrcord from './watch-qrcode.vue';
-import { getUsers as getList, delUser as del } from '@/api/system';
+import { getAdmin as getList, delAdmin as del } from '@/api/system';
 // 引入组件
 const Table = defineAsyncComponent(() => import('@/components/table/index.vue'));
-const { depts, getDept } = useCat();
+const { store } = useCat();
 
 const handleBack = {
 	add: () => {
@@ -70,15 +70,15 @@ const handleBack = {
 }
 
 const handleDelete = () => {
-	const userId = selectList.value;
+	const aId = selectList.value;
 	ElMessageBox({
-		message: '是否确认删除用户编号为"' + userId + '"的数据项?',
+		message: '是否确认删除用户编号为"' + aId + '"的数据项?',
 		title: '警告',
 		showCancelButton: true,
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 	}).then(function () {
-		return del({ id: userId }).then(() => {
+		return del({ id: aId }).then(() => {
 			getTableData(queryParams);
 			ElMessage.success('删除成功');
 		});
@@ -88,7 +88,7 @@ const actionBack = (item: any, row: any) => {
 	handleBack[item.key as keyof typeof handleBack]?.(row);
 }
 // 转为树状结构
-const treeData = computed(() => handleTree(getDept(), 'deptId', 'parentId', 'children'))
+const treeData = computed(() => handleTree(store.depts, 'id', 'parent_id', 'children'))
 
 // 过滤筛选
 const tree = ref();
@@ -101,7 +101,7 @@ watch(
 );
 const selectList = ref();
 const selectionChange = (val: any) => {
-	selectList.value = val.map((item: any) => item.userId);
+	selectList.value = val.map((item: any) => item.aId);
 }
 const state = reactive<{ tableData: TableData }>({
 	tableData: createTableConfig({
@@ -160,9 +160,9 @@ const valueChange = (row: any, prop: string, value: any, type: string) => {
 let queryParams = {} as any;
 // 节点单击事件
 const handleNodeClick = (data: any) => {
-	queryParams.deptId = data.deptId;
+	queryParams.dept_id = data.id;
 	getTableData(queryParams);
-	queryParams.deptId = 0;
+	queryParams.dept_id = 0;
 };
 const openDialog = (id?: number) => {
 	(window as any).$dialog(id ? '编辑' : '添加', dialog, { id })

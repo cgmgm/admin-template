@@ -49,7 +49,7 @@ const addInfo = (id?: number) => {
 };
 const handleBack = {
 	edit: (e: any) => {
-		addInfo(e.userId);
+		addInfo(e.aId);
 	},
 	delete: (e?: any) => {
 		del({ id: e.id }).then(() => {

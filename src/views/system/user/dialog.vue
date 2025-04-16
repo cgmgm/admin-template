@@ -20,11 +20,11 @@
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                     <el-form-item label="用户名" prop="username">
-                        <el-input v-model="state.form.username" placeholder="请输入用户名" :disabled="state.form.userId" />
+                        <el-input v-model="state.form.username" placeholder="请输入用户名" :disabled="state.form.aId" />
                     </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item v-if="state.form.userId == undefined" label="用户密码" prop="password">
+                    <el-form-item v-if="state.form.aId == undefined" label="用户密码" prop="password">
                         <el-input v-model="state.form.password" placeholder="请输入用户密码" type="password" />
                     </el-form-item>
                 </el-col>
@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { reactive, ref, inject, computed, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getUserInfo, saveUser } from '@/api/system'
+import { getAdminInfo, saveAdmin } from '@/api/system'
 import { ElMessage } from 'element-plus';
 import { handleTree } from '@/utils';
 import { md5 } from "js-md5";
@@ -69,7 +69,7 @@ const props = defineProps({
 });
 const state = reactive({
     form: {
-        userId: undefined, // 用戶ID
+        aId: undefined, // 用戶ID
         username: '', // 用戶名称
         real_name: '', // 用戶昵称
         dept_id: '', // 部门ID
@@ -107,7 +107,7 @@ onMounted(async () => {
     } catch (error) {
     }
     if (props.id) {
-        const { data } = await getUserInfo({ id: props.id });
+        const { data } = await getAdminInfo({ id: props.id });
         state.form = data;
         state.form.role_ids = data.roles.map((item: any) => item.id);
     }
@@ -121,7 +121,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         if (valid) {
             state.loading = true;
             const password = md5(state.form.password);
-            await saveUser({ ...state.form, password });
+            await saveAdmin({ ...state.form, password });
             state.loading = false;
             ElMessage.success('提交成功！');
             // 可以发射任意自定义事件

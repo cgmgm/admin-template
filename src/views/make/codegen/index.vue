@@ -17,7 +17,7 @@
                             <el-input v-model="config.apiPath" placeholder="例如: @/api/system"></el-input>
                         </el-form-item>
                         <el-form-item label="列表接口名">
-                            <el-input v-model="config.listApi" placeholder="例如: getUsers"></el-input>
+                            <el-input v-model="config.listApi" placeholder="例如: getAdmins"></el-input>
                         </el-form-item>
                         <el-form-item label="删除接口名">
                             <el-input v-model="config.deleteApi" placeholder="例如: delUser"></el-input>

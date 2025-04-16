@@ -171,7 +171,7 @@ export class FileUploader {
         page_size?: number;
         type?: 'image' | 'video' | 'document' | 'other';
         extension?: string;
-        user_id?: number;
+        a_id?: number;
         keyword?: string;
     } = {}): Promise<any> {
         return new Promise(async (resolve, reject) => {

@@ -8,13 +8,13 @@ export const getMenus = (data?: any) => post('getMenus ', data);
 export const delMenu = (data?: any) => post('delMenu', data);
 
 // 用户
-export const getUsers = (data?: any) => post('getUsers', data);
+export const getAdmin = (data?: any) => post('getAdmin', data);
 
-export const getUserInfo = (data?: any) => post('getUserInfo', data);
+export const getAdminInfo = (data?: any) => post('getAdminInfo', data);
 
-export const delUser = (data?: any) => post('delUser', data);
+export const delAdmin = (data?: any) => post('delAdmin', data);
 
-export const saveUser = (data?: any) => post('saveUser', data);
+export const saveAdmin = (data?: any) => post('saveAdmin', data);
 
 // 角色
 export const getRoles = (data?: any) => post('getRoles', data);

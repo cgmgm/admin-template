@@ -58,7 +58,7 @@ export const getStatus = (data?: any) => get('sys/dictData/list', data);
 
 
 // 获取所有用户
-export const getUserList = (data?: any) => post('sys/user/list', data);
+export const getAdminList = (data?: any) => post('sys/admin/list', data);
 
 
 

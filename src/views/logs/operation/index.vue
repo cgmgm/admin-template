@@ -61,7 +61,7 @@ const state = reactive<{ tableData: TableData }>({
             createSearchItem('用户名', 'username', 'input', {
                 placeholder: '请输入用户名'
             }),
-            createSearchItem('用户ID', 'user_id', 'input', {
+            createSearchItem('用户ID', 'a_id', 'input', {
                 placeholder: '请输入用户ID'
             }),
             createSearchItem('操作模块', 'module', 'input', {
