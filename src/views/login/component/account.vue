@@ -121,6 +121,10 @@ const onSignIn = async () => {
 				};
 				// 存储 token 到浏览器缓存
 				Session.set('token', res.data.token);
+				// 存储 wstoken 到浏览器缓存（如果存在）
+				if (res.data.wsToken) {
+					Session.set('wstoken', res.data.wsToken);
+				}
 				// 存储用户信息到浏览器缓存
 				Session.set('userInfo', userInfos);
 				// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
@@ -165,6 +169,7 @@ const signInSuccess = () => {
 	ElMessage.success(`${currentTimeInfo}，${signInText}`);
 	// 添加 loading，防止第一次进入界面时出现短暂空白
 	NextLoading.start();
+
 };
 </script>
 

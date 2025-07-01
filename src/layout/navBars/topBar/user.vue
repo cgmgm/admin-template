@@ -78,7 +78,7 @@
 <script setup lang="ts" name="layoutBreadcrumbUser">
 import { defineAsyncComponent, ref, unref, computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessageBox, ElMessage, ClickOutside as vClickOutside } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import screenfull from 'screenfull';
 import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
@@ -86,7 +86,9 @@ import { useUserInfo } from '@/stores/userInfo';
 import { useThemeConfig } from '@/stores/themeConfig';
 import other from '@/utils/other';
 import mittBus from '@/utils/mitt';
-import { Session, Local } from '@/utils/storage';
+import { Session } from '@/utils/storage';
+import { Local } from '@/utils/storage';
+import webSocketClient from '@/utils/websocket';
 
 // 引入组件
 // const UserNews = defineAsyncComponent(() => import('@/layout/navBars/topBar/userNews.vue'));
@@ -165,6 +167,8 @@ const onHandleCommandClick = (path: string) => {
 			},
 		})
 			.then(async () => {
+				// 关闭WebSocket连接
+				webSocketClient.close();
 				// 清除缓存/token等
 				Session.clear();
 				// 使用 reload 时，不需要调用 resetRoute() 重置路由

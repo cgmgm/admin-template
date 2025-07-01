@@ -11,6 +11,11 @@
  * @method openShareTagsView 布局设置弹窗，开启 TagsView 共用
  * @method onTagsViewRefreshRouterView tagsview 刷新界面
  * @method onCurrentContextmenuClick tagsview 右键菜单每项点击时
+ * @method ws-connected WebSocket连接成功事件
+ * @method ws-message WebSocket接收消息事件
+ * @method ws-closed WebSocket连接关闭事件
+ * @method ws-error WebSocket连接错误事件
+ * @method ws-reconnect-failed WebSocket重连失败事件
  */
 declare type MittType<T = any> = {
 	openSetingsDrawer?: string;
@@ -23,6 +28,11 @@ declare type MittType<T = any> = {
 	openShareTagsView?: string;
 	onTagsViewRefreshRouterView?: T;
 	onCurrentContextmenuClick?: T;
+	'ws-connected': T;
+	'ws-message': T;
+	'ws-closed': T;
+	'ws-error': T;
+	'ws-reconnect-failed': T;
 };
 
 // mitt 参数类型定义

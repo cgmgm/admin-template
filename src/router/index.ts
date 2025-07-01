@@ -5,12 +5,12 @@ import pinia from '@/stores/index';
 import { storeToRefs } from 'pinia';
 import { useKeepALiveNames } from '@/stores/keepAliveNames';
 import { useRoutesList } from '@/stores/routesList';
-import { useCats } from '@/stores/cats';
 import { useThemeConfig } from '@/stores/themeConfig';
 import { Session } from '@/utils/storage';
 import { staticRoutes, notFoundAndNoPower } from '@/router/route';
 import { initFrontEndControlRoutes } from '@/router/frontEnd';
 import { initBackEndControlRoutes } from '@/router/backEnd';
+import init from '@/utils/init';
 
 /**
  * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。
@@ -109,12 +109,11 @@ router.beforeEach(async (to, from, next) => {
 		} else {
 			const storesRoutesList = useRoutesList(pinia);
 			const { routesList } = storeToRefs(storesRoutesList);
-			const storeCats = useCats(pinia);
 			if (routesList.value.length === 0) {
 				if (isRequestRoutes) {
 					// 后端控制路由：路由数据初始化，防止刷新时丢失
 					await initBackEndControlRoutes();
-					storeCats.getAllDict();
+					init.initApp();
 					// 解决刷新时，一直跳 404 页面问题，关联问题 No match found for location with path 'xxx'
 					// to.query 防止页面刷新时，普通路由带参数时，参数丢失。动态路由（xxx/:id/:name"）isDynamic 无需处理
 					next({ path: to.path, query: to.query });
