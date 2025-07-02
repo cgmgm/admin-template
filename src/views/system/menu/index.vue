@@ -3,7 +3,7 @@
 		<Table ref="tableRef" v-bind="state.tableData" @fetch="getTableData" @valueChange="valueChange"
 			:tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
 			<template #orBut>
-				<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:menu:add'">
+				<el-button type="primary" plain @click="handleBack.add" v-auth="'保存菜单'">
 					新增
 				</el-button>
 			</template>

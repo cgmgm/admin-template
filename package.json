@@ -6,8 +6,9 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
-		"lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/"
+		"build": "npm version patch && vite build && npm run compress",
+		"serve": "vite preview",
+		"compress": "tar -czvf dist/$npm_package_name-$npm_package_version.tar.gz --directory dist ."
 	},
 	"dependencies": {
 		"@element-plus/icons-vue": "^2.1.0",

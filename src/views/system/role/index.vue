@@ -2,7 +2,7 @@
 	<div class="container layout-pd">
 		<Table ref="tableRef" v-bind="state.tableData" @fetch="getTableData" @valueChange="valueChange">
 			<template #orBut>
-				<el-button type="primary" plain @click="handleBack.add" v-auth="'sys:role:add'">
+				<el-button type="primary" plain @click="handleBack.add" v-auth="'保存角色'">
 					新增
 				</el-button>
 			</template>

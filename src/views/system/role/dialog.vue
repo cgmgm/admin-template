@@ -92,7 +92,7 @@ const initForm = (data?: any) => {
 	if (data) {
 		Object.assign(form, data);
 		// 把父级菜单的id选中去了
-		const d = data.menus.filter((item: any) => !data.menus.some((i: any) => i.parent_id === item.id));
+		const d = data.menus?.filter((item: any) => !data.menus?.some((i: any) => i.parent_id === item.id)) || [];
 		checkedKeys.value = d.map((item: any) => item.id);
 	}
 };
