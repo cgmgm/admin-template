@@ -119,13 +119,19 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         if (valid) {
             state.loading = true;
             const password = state.form.password;
-            await saveAdmin({ ...state.form, password });
-            state.loading = false;
-            ElMessage.success('提交成功！');
-            // 可以发射任意自定义事件
-            (dialogInstance as any)?.$emit('success', state.form);
-            // 发射完成后关闭
-            cancel();
+            try {
+                await saveAdmin({ ...state.form, password });
+                state.loading = false;
+                ElMessage.success('提交成功！');
+                // 可以发射任意自定义事件
+                (dialogInstance as any)?.$emit('success', state.form);
+                // 发射完成后关闭
+                cancel();
+            } catch (error) {
+                console.error(error);
+            } finally {
+                state.loading = false;
+            }
         }
     });
 };

@@ -30,7 +30,7 @@ const state = reactive({
 	newsList: [
 		{
 			label: '关于版本发布的通知',
-			value: '风华雪月，基于 vue3 + CompositionAPI + typescript + vite + element plus，正式发布时间：2021年02月28日！',
+			value: '机器人管理，基于 vue3 + CompositionAPI + typescript + vite + element plus，正式发布时间：2021年02月28日！',
 			time: '2020-12-08',
 		},
 		{

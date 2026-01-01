@@ -14,7 +14,6 @@
 					</div>
 				</div>
 				<div class="right">
-					<img src="https://i.hd-r.cn/2cf0d2e192660eec23eb9d0655753e7d.png" />
 				</div>
 			</div>
 		</div>

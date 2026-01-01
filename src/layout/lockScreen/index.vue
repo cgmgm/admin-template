@@ -26,7 +26,7 @@
 						</div>
 						<div class="layout-lock-screen-login-box-name">Administrator</div>
 						<div class="layout-lock-screen-login-box-value">
-							<el-input placeholder="请输入密码" ref="layoutLockScreenInputRef"
+							<el-input placeholder="请输入密码" ref="layoutLockScreenInputRef" type="password"
 								v-model="state.lockScreenPassword" @keyup.enter.native.stop="onLockScreenSubmit()">
 								<template #append>
 									<el-button @click="onLockScreenSubmit">
@@ -38,11 +38,11 @@
 							</el-input>
 						</div>
 					</div>
-					<div class="layout-lock-screen-login-icon">
+					<!-- <div class="layout-lock-screen-login-icon">
 						<SvgIcon name="ele-Microphone" :size="20" />
 						<SvgIcon name="ele-AlarmClock" :size="20" />
 						<SvgIcon name="ele-SwitchButton" :size="20" />
-					</div>
+					</div> -->
 				</div>
 			</transition>
 		</div>
@@ -168,8 +168,8 @@ const setLocalThemeConfig = () => {
 };
 // 密码输入点击事件
 const onLockScreenSubmit = () => {
+	themeConfig.value.lockScreenTime = 300;
 	themeConfig.value.isLockScreen = false;
-	themeConfig.value.lockScreenTime = 30;
 	setLocalThemeConfig();
 };
 // 页面加载时
@@ -206,7 +206,7 @@ onUnmounted(() => {
 
 .layout-lock-screen-img {
 	@extend .layout-lock-screen-fixed;
-	background-image: url('https://i.hd-r.cn/e4a19d84364f185266666765ac21a5db.jpg');
+	background-color: #000;
 	background-size: 100% 100%;
 	z-index: 9999991;
 }

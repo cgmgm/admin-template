@@ -39,20 +39,39 @@ export default function () {
 		return Number.parseFloat(value).toFixed(2);
 	};
 	// 点击复制文本
-	const copyText = (text: string) => {
-		return new Promise((resolve, reject) => {
+	const copyText = async (text: string) => {
+
+		// 首选：现代剪贴板 API（完全无闪）
+		if (navigator.clipboard?.writeText) {
 			try {
-				//复制
-				toClipboard(text);
-				//下面可以设置复制成功的提示框等操作
+				await navigator.clipboard.writeText(text);
 				ElMessage.success(t('message.layout.copyTextSuccess'));
-				resolve(text);
-			} catch (e) {
-				//复制失败
-				ElMessage.error(t('message.layout.copyTextError'));
-				reject(e);
-			}
-		});
+				return;
+			} catch (_) { }
+		}
+
+		// fallback：无 focus 的 selection 方案
+		const span = document.createElement('span');
+		span.textContent = text;
+		span.style.position = 'fixed';
+		span.style.top = '-9999px';
+		span.style.userSelect = 'text';
+
+		document.body.appendChild(span);
+
+		const range = document.createRange();
+		range.selectNodeContents(span);
+
+		const selection = window.getSelection();
+		selection?.removeAllRanges();
+		selection?.addRange(range);
+
+		document.execCommand('copy');
+
+		selection?.removeAllRanges();
+		document.body.removeChild(span);
+
+		ElMessage.success(t('message.layout.copyTextSuccess'));
 	};
 	return {
 		percentFormat,

@@ -293,7 +293,13 @@
 .el-dialog__body {
 	max-height: calc(90vh - 111px) !important;
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: auto;
+}
+
+.el-table__cell .c {
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
 }
 
 /* Card 卡片

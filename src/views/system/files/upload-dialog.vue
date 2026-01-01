@@ -30,7 +30,6 @@ const fileUploadRef = ref<any>(null);
 
 // 获取上传地址
 const uploadAction = import.meta.env.VITE_APP_BASE_API + '/admin/files/upload';
-
 // 提交上传
 const submitUpload = () => {
     if (fileUploadRef.value) {

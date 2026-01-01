@@ -103,7 +103,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启水印
 			isWartermark: false,
 			// 水印文案
-			wartermarkText: '风华雪月',
+			wartermarkText: '机器人管理',
 
 			/**
 			 * 其它设置
