@@ -6,10 +6,10 @@ import pinia from '@/stores/index';
 const initApp = () => {
     const storeCats = useCats(pinia);
     storeCats.getAllDict();
-    console.log(Session.get('wstoken'));
-    if (Session.get('wstoken')) {
-        webSocketClient.connect();
-    }
+    // console.log(Session.get('wstoken'));
+    // if (Session.get('wstoken')) {
+    //     webSocketClient.connect();
+    // }
 }
 
 export default {

@@ -151,18 +151,23 @@ const processHtml = (html: string) => {
 	return res.replace(/\n+$/, '');
 };
 
+// Convert Telegram HTML to Editor HTML (ensure block wrapping)
+const toEditorHtml = (html: string) => {
+	if (!html) return '';
+	// WangEditor v5 needs block elements at root.
+	// If the content is just text or inline tags, wrap in <p>.
+	// Also convert \n to <br> for display.
+	return `<p>${html.replace(/\n/g, '<br/>')}</p>`;
+};
+
 // Watch prop change to update internal state
 watch(
 	() => props.modelValue,
 	(val) => {
 		if (val) {
-			// Do not process input HTML as it might already be correct or coming from DB
-			// But WangEditor needs standard HTML to display correctly.
-			// Ideally we should convert Telegram HTML back to Editor HTML for display if needed.
-			// For now, assuming simple compatibility. <u> is valid HTML.
-			content['zh-cn'] = val['zh-cn'] || '';
-			content['en'] = val['en'] || '';
-			content['zh-tw'] = val['zh-tw'] || '';
+			content['zh-cn'] = toEditorHtml(val['zh-cn'] || '');
+			content['en'] = toEditorHtml(val['en'] || '');
+			content['zh-tw'] = toEditorHtml(val['zh-tw'] || '');
 		}
 	},
 	{ immediate: true, deep: true }
