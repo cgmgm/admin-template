@@ -1,6 +1,6 @@
 <template>
 	<div class="editor-container">
-		<Toolbar :editor="editorRef" :mode="mode" />
+		<Toolbar :editor="editorRef" :defaultConfig="state.toolbarConfig" :mode="mode" />
 		<Editor
 			:mode="mode"
 			:defaultConfig="state.editorConfig"
@@ -46,6 +46,16 @@ const props = defineProps({
 	getHtml: String,
 	// 双向绑定，用于获取 editor.getText()
 	getText: String,
+	// 工具栏配置
+	toolbarConfig: {
+		type: Object,
+		default: () => ({}),
+	},
+	// 编辑器配置
+	editorConfig: {
+		type: Object,
+		default: () => ({}),
+	},
 });
 
 // 定义子组件向父组件传值/事件
@@ -54,8 +64,10 @@ const emit = defineEmits(['update:getHtml', 'update:getText']);
 // 定义变量内容
 const editorRef = shallowRef();
 const state = reactive({
+	toolbarConfig: props.toolbarConfig,
 	editorConfig: {
 		placeholder: props.placeholder,
+		...props.editorConfig,
 	},
 	editorVal: props.getHtml,
 });

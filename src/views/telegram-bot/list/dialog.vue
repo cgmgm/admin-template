@@ -39,6 +39,12 @@
                     <el-form-item label="游戏URL" prop="game_url">
                         <el-input v-model="form.game_url" placeholder="请输入游戏URL（可选）" />
                     </el-form-item>
+                    <el-form-item label="start回复图片" prop="start_img">
+                        <ImageUpload v-model="form.start_img" />
+                    </el-form-item>
+                    <el-form-item label="start回复文案" prop="start_game_text">
+                        <MultiLangRichEditor v-model="form.start_game_text" />
+                    </el-form-item>
                     <el-form-item label="状态" prop="status">
                         <el-radio-group v-model="form.status">
                             <el-radio :label="1">启用</el-radio>
@@ -150,7 +156,7 @@
                 <!-- 自定义内容模式 -->
                 <template v-if="currentButton.handle_type === 'custom'">
                     <el-form-item label="回复内容">
-                        <el-input v-model="currentButton.reply_text" type="textarea" :rows="5" placeholder="请输入回复内容" />
+                        <MultiLangRichEditor v-model="currentButton.reply_text" />
                     </el-form-item>
 
                     <el-form-item label="回复图片">
@@ -264,6 +270,7 @@ import { ElMessage } from 'element-plus';
 import { Delete } from '@element-plus/icons-vue';
 
 const ImageUpload = defineAsyncComponent(() => import('./ImageUpload.vue'));
+const MultiLangRichEditor = defineAsyncComponent(() => import('@/components/MultiLangRichEditor/index.vue'));
 
 const dialogInstance = inject('dialogInstance');
 
@@ -294,7 +301,7 @@ const currentButton = reactive({
     handle_type: 'method',
     handle_method: '',
     method_image: '', // 方法类型的图片
-    reply_text: '',
+    reply_text: {} as any,
     reply_image: '',
     reply_buttons: [] as any[][] // 回复按钮（二维数组，每行可以有多个按钮）
 });
@@ -352,6 +359,8 @@ const form = reactive({
     channel: '',
     service: '',
     game_url: '',
+    start_game_text: {} as any,
+    start_img: '',
     custom_buttons: [] as any[][], // 改为二维数组，每个元素是一行按钮
     status: 1
 });
@@ -372,7 +381,7 @@ const addButtonToRow = (rowIndex: number) => {
         handle_type: 'method',
         handle_method: '',
         method_image: '', // 重置方法图片
-        reply_text: '',
+        reply_text: {},
         reply_image: '',
         reply_buttons: []
     });
@@ -391,7 +400,7 @@ const editButton = (rowIndex: number, btnIndex: number) => {
         handle_type: btn.handle_type || 'method',
         handle_method: btn.handle_method || '',
         method_image: btn.method_image || '', // 加载方法图片
-        reply_text: btn.reply_text || '',
+        reply_text: btn.reply_text || {},
         reply_image: btn.reply_image || '',
         reply_buttons: btn.reply_buttons || []
     });
@@ -410,9 +419,12 @@ const saveButton = () => {
         ElMessage.error('请选择处理方法');
         return;
     }
-    if (currentButton.handle_type === 'custom' && (!currentButton.reply_text || !currentButton.reply_text.trim())) {
-        ElMessage.error('请填写回复内容');
-        return;
+    if (currentButton.handle_type === 'custom') {
+        const hasContent = Object.values(currentButton.reply_text || {}).some((val: any) => val && val.trim());
+        if (!hasContent) {
+            ElMessage.error('请填写回复内容');
+            return;
+        }
     }
 
     const buttonData = {
@@ -547,6 +559,8 @@ const initForm = (data?: any) => {
             channel: data.channel || '',
             service: data.service || '',
             game_url: data.game_url || '',
+            start_game_text: data.start_game_text || {},
+            start_img: data.start_img || '',
             custom_buttons: data.custom_buttons || [],
             status: data.status ?? 1
         });

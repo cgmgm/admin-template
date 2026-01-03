@@ -30,8 +30,6 @@ export const getTelegramBotUsers = (data?: any) => post('telegram-bot-users', da
 // 获取可用的处理方法列表
 export const getAvailableHandleMethods = () => {
     return [
-        { label: '开始游戏', value: 'startGame' },
-        { label: 'PG电子', value: 'openPGGame' },
         { label: '个人中心', value: 'userInfo' },
         { label: '切换语言', value: 'switchLanguage' },
         { label: '上分充值', value: 'recharge' },

@@ -75,7 +75,7 @@ const exampleJson = {
                 {
                     "icon": "❓",
                     "keywords": "帮助|Help",
-                    "reply_text": "这是帮助信息",
+                    "reply_text":  {},
                     "reply_image": null
                 }
             ],

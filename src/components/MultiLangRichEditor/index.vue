@@ -1,0 +1,191 @@
+<template>
+	<div class="multi-lang-rich-editor">
+		<el-tabs v-model="activeLang" type="border-card">
+			<el-tab-pane label="中文" name="zh-cn">
+				<Editor
+					v-if="activeLang === 'zh-cn'"
+					v-model:getHtml="content['zh-cn']"
+					:toolbarConfig="toolbarConfig"
+					:editorConfig="editorConfig"
+					height="300px"
+					placeholder="请输入中文回复内容"
+				/>
+			</el-tab-pane>
+			<el-tab-pane label="繁体中文" name="zh-tw">
+				<Editor
+					v-if="activeLang === 'zh-tw'"
+					v-model:getHtml="content['zh-tw']"
+					:toolbarConfig="toolbarConfig"
+					:editorConfig="editorConfig"
+					height="300px"
+					placeholder="请输入繁体中文回复内容"
+				/>
+			</el-tab-pane>
+			<el-tab-pane label="English" name="en">
+				<Editor
+					v-if="activeLang === 'en'"
+					v-model:getHtml="content['en']"
+					:toolbarConfig="toolbarConfig"
+					:editorConfig="editorConfig"
+					height="300px"
+					placeholder="Please enter English reply content"
+				/>
+			</el-tab-pane>
+		</el-tabs>
+	</div>
+</template>
+
+<script setup lang="ts" name="MultiLangRichEditor">
+import { ref, watch, reactive, defineAsyncComponent } from 'vue';
+
+const Editor = defineAsyncComponent(() => import('@/components/editor/index.vue'));
+
+const props = defineProps({
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const activeLang = ref('zh-cn');
+const content = reactive<any>({
+	'zh-cn': '',
+	en: '',
+	'zh-tw': '',
+});
+
+// Configure toolbar to only show Telegram supported styles
+const toolbarConfig = {
+	toolbarKeys: [
+		'bold',
+		'italic',
+		'underline',
+		'through',
+		'code',
+		'blockquote', // Added blockquote
+		'insertLink',
+		'clearStyle',
+		// 'codeBlock' // WangEditor codeBlock might need pre/code handling
+	],
+};
+
+const editorConfig = {
+	autoFocus: false,
+};
+
+// Process HTML to match Telegram requirements
+const processHtml = (html: string) => {
+	if (!html) return '';
+	
+	const div = document.createElement('div');
+	div.innerHTML = html;
+	
+	const walk = (node: Node): string => {
+		if (node.nodeType === Node.TEXT_NODE) {
+			return node.textContent || '';
+		}
+		
+		if (node.nodeType === Node.ELEMENT_NODE) {
+			const el = node as HTMLElement;
+			const tagName = el.tagName.toLowerCase();
+			
+			// Handle recursion
+			let inner = '';
+			el.childNodes.forEach(child => inner += walk(child));
+			
+			switch (tagName) {
+				case 'p':
+				case 'div': 
+					return inner + '\n';
+				case 'br':
+					return '\n';
+				case 'b':
+				case 'strong':
+					return `<b>${inner}</b>`;
+				case 'i':
+				case 'em':
+					return `<i>${inner}</i>`;
+				case 'u':
+					return `<u>${inner}</u>`;
+				case 's':
+				case 'strike':
+				case 'del':
+					return `<s>${inner}</s>`;
+				case 'a':
+					return `<a href="${el.getAttribute('href') || ''}">${inner}</a>`;
+				case 'code':
+					// Preserve class for language (if used in pre>code)
+					const cls = el.getAttribute('class');
+					return cls ? `<code class="${cls}">${inner}</code>` : `<code>${inner}</code>`;
+				case 'pre':
+					return `<pre>${inner}</pre>`;
+				case 'blockquote':
+					return `<blockquote>${inner}</blockquote>`;
+				case 'tg-spoiler':
+					return `<tg-spoiler>${inner}</tg-spoiler>`;
+				case 'tg-emoji':
+					return `<tg-emoji emoji-id="${el.getAttribute('emoji-id')}">${inner}</tg-emoji>`;
+				case 'span':
+					const style = el.getAttribute('style') || '';
+					if (style.includes('text-decoration: underline')) return `<u>${inner}</u>`;
+					if (style.includes('text-decoration: line-through')) return `<s>${inner}</s>`;
+					if (el.classList.contains('tg-spoiler')) return `<span class="tg-spoiler">${inner}</span>`;
+					return inner;
+				default:
+					return inner;
+			}
+		}
+		return '';
+	};
+	
+	let res = '';
+	div.childNodes.forEach(child => res += walk(child));
+	
+	// Trim ending newlines
+	return res.replace(/\n+$/, '');
+};
+
+// Watch prop change to update internal state
+watch(
+	() => props.modelValue,
+	(val) => {
+		if (val) {
+			// Do not process input HTML as it might already be correct or coming from DB
+			// But WangEditor needs standard HTML to display correctly.
+			// Ideally we should convert Telegram HTML back to Editor HTML for display if needed.
+			// For now, assuming simple compatibility. <u> is valid HTML.
+			content['zh-cn'] = val['zh-cn'] || '';
+			content['en'] = val['en'] || '';
+			content['zh-tw'] = val['zh-tw'] || '';
+		}
+	},
+	{ immediate: true, deep: true }
+);
+
+// Watch internal buffer change to emit update
+watch(
+	content,
+	(val) => {
+		// deep clone + process
+		const processed = {
+			'zh-cn': processHtml(val['zh-cn']),
+			'en': processHtml(val['en']),
+			'zh-tw': processHtml(val['zh-tw']),
+		};
+		emit('update:modelValue', processed);
+	},
+	{ deep: true }
+);
+</script>
+
+<style scoped lang="scss">
+.multi-lang-rich-editor {
+	width: 100%;
+}
+</style>

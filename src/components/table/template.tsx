@@ -87,9 +87,10 @@ export const createActionColumn = (bntList: Object[], options: Partial<TableColu
     bntList = bntList.filter((col: any) => (col.auth ? auths(col.auth) : true));
     if (!bntList.length) return createColumn('', 'action', { width: 80 });
     const width = bntList.length * (bntList.length == 1 ? 130 : 82);
+    const isMobile = document.body.clientWidth < 1000;
     return createColumn('操作', 'action', {
         ...options,
-        fixed: 'right',
+        fixed: isMobile ? null : 'right',
         width,
         template: (row: any) => {
             return () => bntList.map((item: any) => {
