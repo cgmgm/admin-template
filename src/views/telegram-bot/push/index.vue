@@ -190,7 +190,8 @@ const state = reactive<{ tableData: TableData }>({
                         'all': '全部',
                         'new': '新用户',
                         'old': '老用户',
-                        'custom': '自定义'
+                        'custom': '自定义',
+                        'group': '群组'
                     };
                     return <span>{targetMap[row.target_type] || '-'}</span>;
                 }

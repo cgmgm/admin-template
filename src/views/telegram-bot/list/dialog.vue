@@ -68,7 +68,7 @@
                                 <el-empty description="暂无按钮，点击上方按钮添加新行" />
                             </div>
 
-                            <div v-else class="button-rows">
+                            <div v-else class="button-rows" ref="rowsContainerRef">
                                 <div v-for="(row, rowIndex) in form.custom_buttons" :key="rowIndex" class="button-row">
                                     <div class="row-header">
                                         <span>第 {{ rowIndex + 1 }} 行</span>
@@ -82,8 +82,8 @@
                                             </el-button>
                                         </div>
                                     </div>
-                                    <div class="row-buttons">
-                                        <div v-for="(btn, btnIndex) in row" :key="btnIndex" class="button-item"
+                                    <div class="row-buttons" :ref="(el) => setRowRef(el, rowIndex)">
+                                        <div v-for="(btn, btnIndex) in row" :key="btn._id || btnIndex" class="button-item"
                                             @click="editButton(rowIndex, btnIndex)">
                                             <div class="button-content">
                                                 <span class="button-icon">{{ btn.icon || '📱' }}</span>
@@ -264,10 +264,11 @@
 </template>
 
 <script setup lang="ts" name="telegramBotDialog">
-import { ref, reactive, onMounted, inject, defineAsyncComponent } from 'vue';
+import { ref, reactive, onMounted, inject, defineAsyncComponent, nextTick, watch, onUnmounted } from 'vue';
 import { saveTelegramBot, getAvailableHandleMethods } from '@/api/telegramBot';
 import { ElMessage } from 'element-plus';
 import { Delete } from '@element-plus/icons-vue';
+import Sortable from 'sortablejs';
 
 const ImageUpload = defineAsyncComponent(() => import('./ImageUpload.vue'));
 const MultiLangRichEditor = defineAsyncComponent(() => import('@/components/MultiLangRichEditor/index.vue'));
@@ -365,6 +366,77 @@ const form = reactive({
     status: 1
 });
 
+// Sortable 相关
+const rowsContainerRef = ref();
+const rowRefs = ref<HTMLElement[]>([]);
+const sortableInstances: Sortable[] = [];
+
+const setRowRef = (el: any, index: number) => {
+    if (el) {
+        rowRefs.value[index] = el;
+    }
+};
+
+// 初始化 Sortable
+const initSortable = () => {
+    // 清理旧实例
+    sortableInstances.forEach(instance => instance.destroy());
+    sortableInstances.length = 0;
+
+    // 1. 行排序
+    if (rowsContainerRef.value) {
+        const rowSortable = Sortable.create(rowsContainerRef.value, {
+            animation: 150,
+            handle: '.row-header', // 只能拖动头部
+            onEnd: ({ newIndex, oldIndex }: any) => {
+                if (newIndex === oldIndex) return;
+                // 移动行数据
+                const targetRow = form.custom_buttons.splice(oldIndex, 1)[0];
+                form.custom_buttons.splice(newIndex, 0, targetRow);
+                
+                // 行移动后，rowRefs 的顺序可能乱了，重新初始化
+                nextTick(() => {
+                    initSortable();
+                 });
+            }
+        });
+        sortableInstances.push(rowSortable);
+    }
+
+    // 2. 按钮排序（支持跨行）
+    rowRefs.value.forEach((el, rowIndex) => {
+        if (!el) return;
+        const btnSortable = Sortable.create(el, {
+            group: 'buttons', // 允许跨行
+            animation: 150,
+            onEnd: (evt: any) => {
+                const { newIndex, oldIndex, from, to } = evt;
+                
+                // 查找源行和目标行的索引
+                const fromIndex = rowRefs.value.indexOf(from);
+                const toIndex = rowRefs.value.indexOf(to);
+
+                if (fromIndex === -1 || toIndex === -1) return;
+
+                // 如果没变动
+                if (fromIndex === toIndex && newIndex === oldIndex) return;
+
+                // 移动按钮数据
+                const btn = form.custom_buttons[fromIndex].splice(oldIndex, 1)[0];
+                form.custom_buttons[toIndex].splice(newIndex, 0, btn);
+            }
+        });
+        sortableInstances.push(btnSortable);
+    });
+};
+
+// 监听按钮数据变化，从新初始化排序（因为行可能增加）
+watch(() => form.custom_buttons.length, () => {
+    nextTick(() => {
+        initSortable();
+    });
+});
+
 // 添加新行
 const addButtonRow = () => {
     form.custom_buttons.push([]);
@@ -395,6 +467,7 @@ const editButton = (rowIndex: number, btnIndex: number) => {
     drawerTitle.value = '编辑按钮';
     const btn = form.custom_buttons[rowIndex][btnIndex];
     Object.assign(currentButton, {
+        _id: (btn as any)._id,
         text: btn.text || '',
         keywords: btn.keywords || '',
         handle_type: btn.handle_type || 'method',
@@ -428,6 +501,7 @@ const saveButton = () => {
     }
 
     const buttonData = {
+        _id: (currentButton as any)._id || Date.now() + Math.random().toString(36).substr(2, 9),
         text: currentButton.text,
         keywords: currentButton.keywords,
         handle_type: currentButton.handle_type,
@@ -564,6 +638,15 @@ const initForm = (data?: any) => {
             custom_buttons: data.custom_buttons || [],
             status: data.status ?? 1
         });
+        
+        // 为已有按钮添加唯一ID，确保拖拽正常
+        form.custom_buttons.forEach((row: any[]) => {
+            row.forEach(btn => {
+                if (!btn._id) {
+                    btn._id = Date.now() + Math.random().toString(36).substr(2, 9);
+                }
+            });
+        });
     } else {
         // 新增时，添加一个默认行
         form.custom_buttons = [];
@@ -631,6 +714,13 @@ const onCancel = () => {
 
 onMounted(() => {
     initForm(props.data);
+    nextTick(() => {
+        initSortable();
+    });
+});
+
+onUnmounted(() => {
+    sortableInstances.forEach(instance => instance.destroy());
 });
 </script>
 
@@ -706,7 +796,7 @@ onMounted(() => {
                             position: relative;
                             min-width: 120px;
                             padding: 12px 15px;
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            background: linear-gradient(135deg, #667eea 100%);
                             border-radius: 8px;
                             cursor: pointer;
                             transition: all 0.3s;
