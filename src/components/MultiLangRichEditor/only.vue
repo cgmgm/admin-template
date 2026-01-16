@@ -1,37 +1,12 @@
 <template>
 	<div class="multi-lang-rich-editor">
-		<el-tabs v-model="activeLang" type="border-card">
-			<el-tab-pane label="中文" name="zh-cn">
-				<Editor
-					v-if="activeLang === 'zh-cn'"
-					v-model:getHtml="content['zh-cn']"
-					:toolbarConfig="toolbarConfig"
-					:editorConfig="editorConfig"
-					height="300px"
-					placeholder="请输入中文回复内容"
-				/>
-			</el-tab-pane>
-			<el-tab-pane label="繁体中文" name="zh-tw">
-				<Editor
-					v-if="activeLang === 'zh-tw'"
-					v-model:getHtml="content['zh-tw']"
-					:toolbarConfig="toolbarConfig"
-					:editorConfig="editorConfig"
-					height="300px"
-					placeholder="请输入繁体中文回复内容"
-				/>
-			</el-tab-pane>
-			<el-tab-pane label="English" name="en">
-				<Editor
-					v-if="activeLang === 'en'"
-					v-model:getHtml="content['en']"
-					:toolbarConfig="toolbarConfig"
-					:editorConfig="editorConfig"
-					height="300px"
-					placeholder="Please enter English reply content"
-				/>
-			</el-tab-pane>
-		</el-tabs>
+			<Editor
+				v-model:getHtml="content"
+				:toolbarConfig="toolbarConfig"
+				:editorConfig="editorConfig"
+				height="300px"
+				placeholder="请输入中文回复内容"
+			/>
 	</div>
 </template>
 
@@ -42,8 +17,8 @@ const Editor = defineAsyncComponent(() => import('@/components/editor/index.vue'
 
 const props = defineProps({
 	modelValue: {
-		type: Object,
-		default: () => ({}),
+		type: String,
+		default: '',
 	},
 	disabled: {
 		type: Boolean,
@@ -53,12 +28,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const activeLang = ref('zh-cn');
-const content = reactive<any>({
-	'zh-cn': '',
-	en: '',
-	'zh-tw': '',
-});
+const content = ref<any>('');
 
 // Configure toolbar to only show Telegram supported styles
 const toolbarConfig = {
@@ -164,23 +134,15 @@ const toEditorHtml = (html: string) => {
 watch(
 	() => props.modelValue,
 	(val) => {
-		if (val) {
-			const zh = toEditorHtml(val['zh-cn'] || '');
-			const en = toEditorHtml(val['en'] || '');
-			const tw = toEditorHtml(val['zh-tw'] || '');
-
-			if (processHtml(content['zh-cn']) !== (val['zh-cn'] || '')) {
-				content['zh-cn'] = zh;
-			}
-			if (processHtml(content['en']) !== (val['en'] || '')) {
-				content['en'] = en;
-			}
-			if (processHtml(content['zh-tw']) !== (val['zh-tw'] || '')) {
-				content['zh-tw'] = tw;
-			}
+		// Only update if the parsed content is different to avoid formatting loops
+		if (processHtml(content.value) === val) {
+			return;
+		}
+		if (val || val === '') {
+			content.value = toEditorHtml(val || '');
 		}
 	},
-	{ immediate: true, deep: true }
+	{ immediate: true }
 );
 
 // Watch internal buffer change to emit update
@@ -188,17 +150,12 @@ watch(
 	content,
 	(val) => {
 		// deep clone + process
-		const processed = {
-			'zh-cn': processHtml(val['zh-cn']),
-			'en': processHtml(val['en']),
-			'zh-tw': processHtml(val['zh-tw']),
-		};
-		// Only emit if value actually changed
-		if (JSON.stringify(processed) !== JSON.stringify(props.modelValue)) {
+		const processed = processHtml(val);
+		// Only emit if the value actually changed
+		if (processed !== props.modelValue) {
 			emit('update:modelValue', processed);
 		}
-	},
-	{ deep: true }
+	}
 );
 </script>
 

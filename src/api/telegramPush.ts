@@ -37,7 +37,8 @@ export const targetTypes = [
     { label: '全部用户', value: 'all' },
     { label: '新用户', value: 'new' },
     { label: '老用户', value: 'old' },
-    { label: '自定义', value: 'custom' }
+    { label: '自定义', value: 'custom' },
+    { label: '群组', value: 'group' }
 ];
 
 // 状态选项

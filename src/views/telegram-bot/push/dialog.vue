@@ -1,5 +1,5 @@
 <template>
-    <div style="min-width: 500px;">
+    <div style="min-width: 800px;">
         <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" v-loading="loading">
             <el-tabs v-model="activeTab">
                 <!-- 基本信息 -->
@@ -17,8 +17,7 @@
                     </el-form-item>
 
                     <el-form-item label="推送内容" prop="push_content">
-                        <el-input v-model="form.push_content" type="textarea" :rows="5" placeholder="请输入推送内容"
-                            :disabled="isView" />
+                        <MultiLangRichEditor v-model="form.push_content" />
                     </el-form-item>
 
                     <el-form-item label="推送图片">
@@ -128,6 +127,21 @@
                         <el-input v-model="customUserIds" type="textarea" :rows="3" placeholder="输入用户ID，每行一个或用逗号分隔"
                             :disabled="isView" />
                     </el-form-item>
+
+                    <el-form-item label="选择群组" v-if="form.target_type === 'group'" prop="target_user_ids">
+                        <el-select v-model="form.target_user_ids" multiple placeholder="请选择群组" style="width: 100%;"
+                            :disabled="isView">
+                            <el-option v-for="group in groupList" :key="group.chat_id" 
+                                :label="group.chat_title || group.chat_id" 
+                                :value="group.chat_id">
+                                <span style="float: left">{{ group.chat_title || '未命名群组' }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 13px">{{ group.chat_id }}</span>
+                            </el-option>
+                        </el-select>
+                        <div class="help-text">
+                            选择要推送的群组，机器人必须在群组中且是活跃状态
+                        </div>
+                    </el-form-item>
                 </el-tab-pane>
 
                 <!-- 推送控制 -->
@@ -167,9 +181,10 @@
 import { ref, reactive, computed, watch, onMounted, defineAsyncComponent, inject } from 'vue';
 import { ElMessage } from 'element-plus';
 import { createPushTask, updatePushTask, scheduleTypes, targetTypes, weekDays } from '@/api/telegramPush';
-import { getAllTelegramBots } from '@/api/telegramBot';
+import { getAllTelegramBots, getTelegramBotGroups } from '@/api/telegramBot';
 
 const ImageUpload = defineAsyncComponent(() => import('../list/ImageUpload.vue'));
+const MultiLangRichEditor = defineAsyncComponent(() => import('@/components/MultiLangRichEditor/only.vue'));
 
 const dialogInstance = inject('dialogInstance') as any;
 
@@ -188,6 +203,7 @@ const loading = ref(false);
 const formRef = ref();
 const activeTab = ref('basic');
 const botList = ref<any[]>([]);
+const groupList = ref<any[]>([]);
 
 const title = computed(() => {
     if (props.type === 'view') return '查看推送任务';
@@ -246,13 +262,48 @@ watch(scheduleDaysArray, (val) => {
 
 // 监听自定义用户ID变化
 watch(customUserIds, (val) => {
-    if (val) {
-        const ids = val.split(/[,\n]/).map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-        form.target_user_ids = ids;
-    } else {
-        form.target_user_ids = [];
+    if (form.target_type === 'custom') {
+        if (val) {
+            const ids = val.split(/[,\n]/).map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            form.target_user_ids = ids;
+        } else {
+            form.target_user_ids = [];
+        }
     }
 });
+
+// 监听目标类型变化
+watch(() => form.target_type, (val) => {
+    if (val === 'group') {
+        loadGroupList();
+        // 如果是从其他类型切换过来，且不是编辑回显（这里简单处理，如果是group类型但ids为空则可能是新切换）
+        // 实际上表单初始化时如果类型是group，ids会有值
+    } else if (val === 'custom') {
+        // 如果切换回 custom，且 target_user_ids 有值（可能来自 group），这里 customUserIds 需要同步吗？
+        // 通常切换类型会清空 target_user_ids，除非是编辑状态下初始化
+        if (form.target_user_ids.length > 0 && !customUserIds.value) {
+             customUserIds.value = form.target_user_ids.join('\n');
+        }
+    }
+});
+
+// 加载群组列表
+const loadGroupList = async () => {
+    if (!form.bot_name) {
+        if (form.target_type === 'group') {
+             ElMessage.warning('请先选择机器人');
+        }
+        groupList.value = [];
+        return;
+    }
+    
+    try {
+        const res = await getTelegramBotGroups({ bot_name: form.bot_name });
+        groupList.value = res.data || [];
+    } catch (error) {
+        console.error('加载群组列表失败:', error);
+    }
+};
 
 onMounted(() => {
     loadBotList();
@@ -307,14 +358,25 @@ const initForm = (data: any) => {
     }
 
     // 初始化自定义用户ID
-    if (form.target_user_ids && form.target_user_ids.length > 0) {
+    if (form.target_type === 'custom' && form.target_user_ids && form.target_user_ids.length > 0) {
         customUserIds.value = form.target_user_ids.join('\n');
+    }
+    
+    // 如果是群组类型，加载群组列表
+    if (form.target_type === 'group' && form.bot_name) {
+        loadGroupList();
     }
 };
 
 // 机器人切换
 const handleBotChange = () => {
     // 可以在这里加载机器人相关的统计数据
+    
+    // 如果当前选的是群组类型，重新加载群组
+    if (form.target_type === 'group') {
+        form.target_user_ids = []; // 切换机器人清空已选群组
+        loadGroupList();
+    }
 };
 
 // 添加按钮行

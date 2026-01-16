@@ -6,6 +6,8 @@ export const getTelegramBots = (data?: any) => post('telegram-bots', data);
 
 export const getAllTelegramBots = (data?: any) => post('telegram-bots/all', data);
 
+export const getTelegramBotGroups = (data?: any) => post('telegram-bots/groups', data);
+
 export const getTelegramBotDetail = (data?: any) => post('telegram-bots/show', data);
 
 export const saveTelegramBot = (data?: any) => post('telegram-bots/store', data);
