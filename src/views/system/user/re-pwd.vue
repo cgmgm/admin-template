@@ -7,11 +7,6 @@
                         <el-input v-model="state.form.username" placeholder="请输入用户名" :disabled="true" />
                     </el-form-item>
                 </el-col>
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="用户昵称" prop="nickname">
-                        <el-input v-model="state.form.nickname" placeholder="请输入用户昵称" :disabled="true" />
-                    </el-form-item>
-                </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                     <el-form-item label="新密码" prop="password">
                         <el-input v-model="state.form.password" placeholder="请输入新密码" type="password" autocomplete="off"
@@ -62,8 +57,6 @@ const state = reactive({
     },
     loading: false,
     rules: {
-        username: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-        nickname: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
         password: [
             { required: true, message: '用户密码不能为空', trigger: 'blur' },
             { pattern: /^[a-zA-Z0-9]{6,16}$/, message: '用户密码长度应在6到16个字符之间', trigger: 'blur' }
@@ -87,7 +80,7 @@ onMounted(async () => {
     state.loading = true;
     if (props.id) {
         const { data } = await getAdminInfo({ id: props.id });
-        state.form = data;
+        state.form = { ...data, aId: props.id };
     }
     state.loading = false;
 })
@@ -124,7 +117,7 @@ const cancel = () => {
 <style scoped lang="scss">
 .add-info-container {
     padding: 15px;
-    width: 800px;
+    width: 500px;
 
 }
 </style>
